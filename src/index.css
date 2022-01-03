@@ -1,1 +1,10 @@
+bodt, html {
+    margin: 0;
+    padding: 0;
+}
 
+.pokus {
+    height: 800px;
+    width: 900px;
+    background-color: pink;
+}
