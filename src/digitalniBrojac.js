@@ -7,7 +7,8 @@ export function DigitalniBrojac({sirina="200px", broj=888}) {
 	const r = React.useRef();
 	const r1 = React.useRef();
 	React.useEffect(()=>{
-	    dodajStilove(r1.current, {width: sirina, backgroundColor: "black", display: "flex", flexDirection: "row", justifyContent: "space-around"});	
+	    dodajStilove(r1.current, {width: sirina, backgroundColor: "black", display: "flex", flexDirection: "row", justifyContent: "space-around",
+			                      margin: "0px 10px 0px 10px"});	
 		
 		let s = parseFloat(window.getComputedStyle(r1.current, null).getPropertyValue("width"));
 		console.log("sirinaaa je " + s);

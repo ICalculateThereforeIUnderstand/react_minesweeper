@@ -1,0 +1,38 @@
+.gumb {
+    height: 30px;
+    width: 30px;
+    background-color: #bbb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: border 0.5s;
+    box-sizing: border-box;
+}
+
+.gumb-el {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.5s;
+}
+
+.otpusten {
+    border-left: 4px solid white;
+    border-top: 4px solid white;
+    border-right: 4px solid #555;
+    border-bottom: 4px solid #555;
+}
+
+.pritisnut {
+    border-left: 2px solid #555;
+    border-top: 2px solid #555;
+    border-right: 2px solid #555;
+    border-bottom: 2px solid #555;
+}
+
+.emoji {
+    height: 18px;
+    width: 18px;
+    background-color: yellow;
+    border-radius: 50%;
+}
