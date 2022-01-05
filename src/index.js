@@ -2,62 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { Gumb} from "./gumb.js";
+import { Ploca } from "./ploca.js";
 import { DigitalniBrojac } from "./digitalniBrojac.js";
 
 let cont = document.querySelector("#cont");
 
-
-function App() {
-	const [br, setBr] = React.useState(0);
-	
-	React.useEffect(()=>{
-		if (true) {
-		    setInterval(()=>{setBr((prevBr)=>{return (prevBr+1)})}, 130);
-		}
-	}, []);
-	
-	return (
-	    <div className="pokus">
-            <DigitalniBrojac sirina="100px" broj={br}/>
-        </div>
-	)
-}
-
-
-function Ploca({x=10, y=10}) {
-	const [nx, setNx] = React.useState(x);
-	const [ny, setNy] = React.useState(y);
-	
-	
-	function generirajPlocu(x, y) {
-		let polje = [];
-		for (let i = 0; i < x; i++) {
-			for (let j = 0; j < y; j++) {
-				if (Math.random() < 0.8) {
-					let r = Math.random(); 
-					if (r < 0.2) {
-				        polje.push(React.createElement("div", {key:j + i*y, id: (j+i*y)+"el", className: "el plava"}, "1"));
-				    } else if (r < 0.4) {
-						polje.push(React.createElement("div", {key:j + i*y, id: (j+i*y)+"el", className: "el zelena"}, "2"));
-				    } else if (r < 0.6) {
-						polje.push(React.createElement("div", {key:j + i*y, id: (j+i*y)+"el", className: "el crvena"}, "3"));
-				    } else {
-						polje.push(React.createElement("div", {key:j + i*y, id: (j+i*y)+"el", className: "el"}));
-					}
-				} else {
-					polje.push(React.createElement("div", {key:j + i*y, id: (j+i*y)+"el", className: "el zatvoreno"}));
-				}
-			}
-		}
-		return polje;
-	}
-	
-	return (
-	    <div className="ploca">
-	        {generirajPlocu(nx, ny)}
-	    </div>
-	)
-}
 
 function Povrsina() {
 	return (
@@ -85,8 +34,22 @@ function App1() {
 	)
 }
 
+class App2 extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+	
+	render() {
+		return (
+		    <div className="pokus">
+	            <Povrsina/>
+	        </div>
+		)
+	}
+}
+
 ReactDOM.render(
-    <App1/>,
+    <App2/>,
     cont
 )
 
