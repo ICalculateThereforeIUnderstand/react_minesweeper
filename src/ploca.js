@@ -1,10 +1,12 @@
 import React from "react";
 import "./ploca.css";
 
+function defaultFun() { console.log("kliknuo si ali nisi postavio funkciju2.")}
 
-function Polje({tip="prazno"}) {
+function Polje({tip="prazno", klikPolje=defaultFun, id="-1"}) {
 	const [broj, setBroj] = React.useState("");
 	const [klasa, setKlasa] = React.useState("polje");
+	const [idOznaka] = React.useState(id);
 	
 	React.useEffect(()=>{
 		switch (tip) {
@@ -67,12 +69,53 @@ function Polje({tip="prazno"}) {
 		
 	}, [tip]);
 	
-	
 	return (
-	    <div className={klasa}>
+	    <div className={klasa} onClick={()=>{klikPolje(idOznaka)}}>
 	        {broj}
 	    </div>
 	)
+}
+
+export function Ploca1({polje=[], klikPolje=defaultFun}) {
+	const [matrica, setMatrica] = React.useState([]);
+	const [nx, setNx] = React.useState(0);
+	const [ny, setNy] = React.useState(0);
+	
+	React.useEffect(()=> {
+		if (polje.length === 0) {
+			setNx(0);
+			setNy(0);
+		} else {
+			setNx(polje[0].length);
+			setNy(polje.length);
+			setMatrica(polje);
+		}		
+	}, [polje]);
+	
+	function generirajElemente() {
+		let poljee = [];
+		let x = 0;
+		let y = 0;
+		if (matrica.length !== 0) {
+			x = matrica[0].length;
+			y = matrica.length;
+		}
+		
+		for (let i = 0; i < y; i++) {
+			for (let j = 0; j < x; j++) {
+			    poljee.push(<Polje key={j+i*x} tip={matrica[i][j]} id={(j+i*x)+"el"} klikPolje={klikPolje}/>);
+		    }
+		}
+		return poljee;
+	}
+	
+	
+    return (
+	    <div className="ploca">
+	        {generirajElemente(nx, ny)}
+	    </div>
+	)
+	
 }
 
 
@@ -91,7 +134,6 @@ export function Ploca({x=10, y=10}) {
 		    }	
 		    pp1.push(pp);
 		}
-		
 		
 		// postavljamo mine
 		for (let i = 0; i < brMina; i++) {
