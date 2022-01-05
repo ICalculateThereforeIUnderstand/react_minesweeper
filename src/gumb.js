@@ -3,9 +3,10 @@ import { BsEmojiSmile } from "react-icons/bs";
 import "./gumb.css"
 
 class pomocna {
-	constructor(r, r1) {
+	constructor(r, r1, klik) {
 		this.r = r;
 		this.r1 = r1;
+		this.klikFun = klik;
 		
 		this.klik = this.klik.bind(this);
 	}
@@ -16,6 +17,8 @@ class pomocna {
 		this.r.current.classList.remove("otpusten");
 		this.r.current.classList.add("pritisnut");
 		this.r1.current.style.transform = "translate(3%, 3%)";
+		this.klikFun();
+		
 		setTimeout(()=>{
 			this.r.current.classList.remove("pritisnut");
 		    this.r.current.classList.add("otpusten");
@@ -24,10 +27,10 @@ class pomocna {
 	}
 }
 
-export function Gumb() {
+export function Gumb({klik=defaultFun}) {
 	const r = React.useRef();
 	const r1 = React.useRef();
-	const p = new pomocna(r, r1);
+	const p = new pomocna(r, r1, klik);
 	
 	React.useEffect(()=>{
 		let sirina = parseFloat(window.getComputedStyle(r.current, null).getPropertyValue("width"));
@@ -52,3 +55,5 @@ function dodajStilove(el, stilovi) {
 	    el.style[key] = stilovi[key];
 	}
 }
+
+function defaultFun() { console.log("kliknuo si GUMB, ali nisi postavio funkciju.")}

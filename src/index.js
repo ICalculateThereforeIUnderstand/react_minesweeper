@@ -2,19 +2,17 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { Gumb} from "./gumb.js";
-import { Ploca, Ploca1 } from "./ploca.js";
+import { Ploca } from "./ploca.js";
 import { DigitalniBrojac } from "./digitalniBrojac.js";
 
 let cont = document.querySelector("#cont");
 
 
-function Povrsina({polje=[], brMina=0, klikPolje=defaultFun}) {
+function Povrsina({polje=[], brMina=0, klikPolje=defaultFun, klikStart=defaultFun}) {
 	const [matrica, setMatrica] = React.useState(polje);
 	
 	React.useEffect(()=>{
 		setMatrica(polje);
-		//console.log("u funkciji POVRSINA swbe je " + swBr);
-		console.log("u funkciji POVRSINA polje je " + polje);
 	}, [polje]);
 	
 	
@@ -23,13 +21,12 @@ function Povrsina({polje=[], brMina=0, klikPolje=defaultFun}) {
 	        <div id="povrsina-el">
 	            <div id="povrsina-el-el">
 	                <DigitalniBrojac sirina="60px" broj={brMina}/>
-	                <Gumb/>
+	                <Gumb klik={klikStart}/>
 	                <DigitalniBrojac sirina="60px" broj={456}/>
 	            </div>    
 	        </div>
 	        <div id="povrsina-el1">
-	            {/*<Ploca x={11} y={9}/>*/}
-	            <Ploca1 polje={polje} klikPolje={klikPolje}/>
+	            <Ploca polje={polje} klikPolje={klikPolje}/>
 	        </div>
 	    </div>
 	)
@@ -37,21 +34,14 @@ function Povrsina({polje=[], brMina=0, klikPolje=defaultFun}) {
 
 function defaultFun() { console.log("kliknuo si ali nisi postavio funkciju.")}
 
-
-function App1() {
-	return (
-	    <div className="pokus">
-	        <Povrsina/>
-	    </div>
-	)
-}
-
-class App2 extends React.Component {
+class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
 		this.state = {
-			polje: [],
+			polje: [],          //  zadaje razmjestaj mina i brojeva
+			poljeSw: [],        //  sadrzi informacije o statusu polja, da li je otvoreno/zatvoreno/oznaceno zastavicom
+			poljeDisplay: [],   //  kombinira podatke iz polje i poljeSw te definira trenutni display
 			nx: 11,
 			ny: 9,
 			brMina: 30,
@@ -62,26 +52,63 @@ class App2 extends React.Component {
 		this.brSusjednihMina = this.brSusjednihMina.bind(this);
 		this.inicirajPolje = this.inicirajPolje.bind(this);
 		this.kliknutoPolje = this.kliknutoPolje.bind(this);
+		this.vratiDisplay = this.vratiDisplay.bind(this);
 	}
 	
 	componentDidMount() {
 		this.inicirajPolje();
-		
 		//setInterval(()=>{this.inicirajPolje();}, 5000);
 	}
-	
+		
 	kliknutoPolje(e) {
-		console.log("Upravo si kliknuo na poljeeeee " + e + "  --  " + Math.random());
+		let poz = parseInt(e);
+		let x = poz % this.state.nx;
+		let y = Math.floor(poz / this.state.nx);
+		
+		this.setState((prevState)=> {
+		    let p = prevState.poljeSw[y][x];
+		    switch (p) {
+				case "zatvoreno":
+				    p = "zastava";
+				    break;
+				case "zastava":
+				    p = "otvoreno";
+				    break;
+				case "otvoreno":
+				    p = "zatvoreno";
+				    break;
+				default:
+				    console.log("Dogodila se nekakva POGRESKA...");
+				    break;
+			}
+			prevState.poljeSw[y][x] = p;
+			
+			return {poljeSW: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw)};
+			
+		})
+		
 	}
 	
 	inicirajPolje() {
 		let pp1 = [];
+		let pp2 = [];
 		for (let i = 0; i < this.state.ny; i++) {
 			let pp = [];
+			let ppp = [];
 			for (let j = 0; j < this.state.nx; j++) {
 				pp.push("prazno");
+				if (Math.random() < 0.5) {
+				    ppp.push("otvoreno");
+				} else {
+					if (Math.random() < 0.3) {
+					    ppp.push("zastava");
+				    } else {
+					    ppp.push("zatvoreno");
+					}
+				}
 		    }	
 		    pp1.push(pp);
+		    pp2.push(ppp);
 		}
 		
 		// postavljamo mine
@@ -100,13 +127,34 @@ class App2 extends React.Component {
 			for (let j = 0; j < this.state.nx; j++) {
 				if (pp1[i][j] !== "mina") {
 				    let brr = this.brSusjednihMina(j, i, pp1);
-				    //let brr = 0;
 				    if (brr !== 0)  pp1[i][j] = brr.toString();
 				}
 			}
 		}
 		
-		this.setState((prevState)=>{return {...prevState, brPreostalihMina: prevState.brMina, polje: pp1}});
+		this.setState((prevState)=>{return {...prevState, brPreostalihMina: prevState.brMina, polje: pp1, 
+			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2}});
+	}
+	
+	vratiDisplay(polje, poljeSw) {
+		let dulj1 = polje.length;
+		let dulj2 = polje[0].length;
+		let rez = [];
+		for (let i = 0; i < dulj1; i++) {
+			let re = [];
+			for (let j = 0; j < dulj2; j++) {
+				let tt = poljeSw[i][j];
+				if (tt === "otvoreno") {
+					re.push(polje[i][j]);
+				} else if (tt === "zatvoreno") {
+					re.push("zatvoreno");
+				} else if (tt === "zastava") {
+					re.push("zastava");
+				}
+			}
+			rez.push(re);
+		}
+		return rez;
 	}
 	
 	mina(x, y, mat) {
@@ -166,14 +214,14 @@ class App2 extends React.Component {
 	render() {
 		return (
 		    <div className="pokus">
-	            <Povrsina polje={this.state.polje} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje}/>
+	            <Povrsina polje={this.state.poljeDisplay} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje}/>
 	        </div>
 		)
 	}
 }
 
 ReactDOM.render(
-    <App2/>,
+    <App/>,
     cont
 )
 
