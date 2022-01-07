@@ -44,7 +44,7 @@ class App extends React.Component {
 			poljeDisplay: [],   //  kombinira podatke iz polje i poljeSw te definira trenutni display
 			nx: 11,
 			ny: 9,
-			brMina: 30,
+			brMina: 11,
 			brPreostalihMina: 0
 		}
 		
@@ -52,12 +52,124 @@ class App extends React.Component {
 		this.brSusjednihMina = this.brSusjednihMina.bind(this);
 		this.inicirajPolje = this.inicirajPolje.bind(this);
 		this.kliknutoPolje = this.kliknutoPolje.bind(this);
+		this.kliknutoPolje1 = this.kliknutoPolje1.bind(this);
 		this.vratiDisplay = this.vratiDisplay.bind(this);
+		this.vratiPraznaSusjednaPolja = this.vratiPraznaSusjednaPolja.bind(this);
+		this.praznoPoljeSw = this.praznoPoljeSw.bind(this);
+		this.nadodajPolje = this.nadodajPolje.bind(this);
 	}
 	
 	componentDidMount() {
 		this.inicirajPolje();
 		//setInterval(()=>{this.inicirajPolje();}, 5000);
+	}
+	
+	praznoPoljeSw(polje, x, y) {
+		//console.log("ispitujemo " + x + " - " + y);
+		
+		if (x < 0 || x >= this.state.nx) return false;
+		if (y < 0 || y >= this.state.ny) return false;
+		
+		
+		if (polje[y][x] == "prazno")  return true;
+		return false;
+	}
+	
+	nadodajPolje(rez, polje, x, y) {
+		if (x >= 0  &&  x < this.state.nx  &&  y >= 0  &&  y < this.state.ny  &&  polje[y][x] !== "prosao") {
+		    rez.push([x, y]);
+		    polje[y][x] = "prosao";
+		}
+	}
+	
+	vratiPraznaSusjednaPolja(x, y) {
+		let pp = [[x, y]];
+		//console.log("(" + x + "," + y + ")");
+		let polje = JSON.parse(JSON.stringify(this.state.polje));
+		let rez = [[x,y]];
+		polje[y][x] = "prosao";
+		while (pp.length !== 0) {
+            let [x1, y1] = pp.shift();		
+            
+            if (false) {
+            if (this.praznoPoljeSw(polje, x1-1, y1)) { polje[y1][x1-1] = "prosao"; rez.push([x1-1, y1]); pp.push([x1-1, y1]); }
+            if (this.praznoPoljeSw(polje, x1+1, y1)) { polje[y1][x1+1] = "prosao"; rez.push([x1+1, y1]); pp.push([x1+1, y1]); }
+            if (this.praznoPoljeSw(polje, x1, y1-1)) { polje[y1-1][x1] = "prosao"; rez.push([x1, y1-1]); pp.push([x1, y1-1]); }
+            if (this.praznoPoljeSw(polje, x1, y1+1)) { polje[y1+1][x1] = "prosao"; rez.push([x1, y1+1]); pp.push([x1, y1+1]); }
+		    } else {
+			// u pp polje nadodajemo samo susjedna prazna polja
+			if (this.praznoPoljeSw(polje, x1-1, y1)) { pp.push([x1-1, y1]); }
+            if (this.praznoPoljeSw(polje, x1+1, y1)) { pp.push([x1+1, y1]); }
+            if (this.praznoPoljeSw(polje, x1, y1-1)) { pp.push([x1, y1-1]); }
+            if (this.praznoPoljeSw(polje, x1, y1+1)) { pp.push([x1, y1+1]); }
+            if (this.praznoPoljeSw(polje, x1-1, y1-1)) { pp.push([x1-1, y1-1]); }
+            if (this.praznoPoljeSw(polje, x1-1, y1+1)) { pp.push([x1-1, y1+1]); }
+            if (this.praznoPoljeSw(polje, x1+1, y1-1)) { pp.push([x1+1, y1-1]); }
+            if (this.praznoPoljeSw(polje, x1+1, y1+1)) { pp.push([x1+1, y1+1]); }
+            
+            // u rez nadodajemo i prazna polja i susjedna polja sa brojevima
+            this.nadodajPolje(rez, polje, x1-1, y1);
+            this.nadodajPolje(rez, polje, x1+1, y1);
+            this.nadodajPolje(rez, polje, x1, y1-1);
+            this.nadodajPolje(rez, polje, x1, y1+1);
+         
+            this.nadodajPolje(rez, polje, x1-1, y1-1);
+            this.nadodajPolje(rez, polje, x1+1, y1-1);
+            this.nadodajPolje(rez, polje, x1-1, y1+1);
+            this.nadodajPolje(rez, polje, x1+1, y1+1);
+            
+			}
+		}
+		
+		return rez;
+	}
+	
+	kliknutoPolje1(e) {
+		let poz = parseInt(e);
+		let x = poz % this.state.nx;
+		let y = Math.floor(poz / this.state.nx);
+		console.log("kliknuo si polje (" + x + ", " + y + ")  "  +  this.state.polje[y][x]);
+		
+		if (this.state.polje[y][x] == "prazno") {
+			console.log("polje je prazno... " + Math.random());
+			
+			let rez = this.vratiPraznaSusjednaPolja(x, y);
+			//let pp = this.state.poljeSw;
+			let pp = JSON.parse(JSON.stringify(this.state.poljeSw));
+			for (let i = 0; i < rez.length; i++) {
+				pp[ rez[i][1] ][ rez[i][0] ] = "otvoreno";
+				console.log("otvaramo " + rez[i][0] + ", " + rez[i][1]);
+			}
+			
+			this.setState((prevState) => {return {poljeSw: pp, poljeDisplay: this.vratiDisplay(prevState.polje, pp)}});
+			
+			console.log("Popis praznih polja: ");
+			for (let i = 0; i < -1*rez.length; i++) {
+				console.log("(" + rez[i][0] + "," + rez[i][1] + ")");
+			}
+		} else {
+			this.setState((prevState)=> {
+		        let p = prevState.poljeSw[y][x];
+		        switch (p) {
+				    case "zatvoreno":
+				        p = "zastava";
+				        break;
+				    case "zastava":
+				        p = "otvoreno";
+				        break;
+				    case "otvoreno":
+				        p = "zatvoreno";
+				        break;
+				    default:
+				        console.log("Dogodila se nekakva POGRESKA...");
+				        break;
+			    }
+			    prevState.poljeSw[y][x] = p;
+			
+			    return {poljeSW: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw)};
+		    })
+			
+		}
 	}
 		
 	kliknutoPolje(e) {
@@ -97,8 +209,9 @@ class App extends React.Component {
 			let ppp = [];
 			for (let j = 0; j < this.state.nx; j++) {
 				pp.push("prazno");
-				if (Math.random() < 0.5) {
-				    ppp.push("otvoreno");
+				if (Math.random() < 1.5) {
+				    //ppp.push("otvoreno");
+				    ppp.push("zatvoreno");
 				} else {
 					if (Math.random() < 0.3) {
 					    ppp.push("zastava");
@@ -214,7 +327,7 @@ class App extends React.Component {
 	render() {
 		return (
 		    <div className="pokus">
-	            <Povrsina polje={this.state.poljeDisplay} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje}/>
+	            <Povrsina polje={this.state.poljeDisplay} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje1} klikStart={this.inicirajPolje}/>
 	        </div>
 		)
 	}
