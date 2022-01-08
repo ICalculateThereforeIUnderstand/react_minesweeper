@@ -1,11 +1,11 @@
 .ploca {
     display: inline-grid; 
-    grid-template-rows: repeat(9, 25px);
-    grid-template-columns: repeat(11, 25px);
+    /*grid-template-rows: repeat(9, 25px);
+    grid-template-columns: repeat(11, 25px);*/
     grid-column-gap: 2px;
     grid-row-gap: 2px;
-    height: 244px;
-    width: 298px;
+    /*height: 244px;
+    width: 298px;*/
     
     background-color: grey;
     border-left: 6px solid #555;
@@ -53,4 +53,29 @@
     background-image: url("./slike/zastava.svg");
     background-size: contain;
     background-repeat: no-repeat; 
+}
+
+#menu {
+    height: 80px;
+    width: 600px;
+    /*background-color: blue;*/
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.menu-el {
+    /*background-color: yellow;*/
+    height: 40px;
+    font-family: sans-serif;
+    margin: 0px 30px 0px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+}
+
+.menu-el:hover {
+    color: #555;
+    cursor: pointer;
 }
