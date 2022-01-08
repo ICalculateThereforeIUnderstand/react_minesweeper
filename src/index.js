@@ -8,7 +8,7 @@ import { DigitalniBrojac } from "./digitalniBrojac.js";
 let cont = document.querySelector("#cont");
 
 
-function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun}) {
+function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0}) {
 	const [matrica, setMatrica] = React.useState(polje);
 	
 	React.useEffect(()=>{
@@ -21,7 +21,7 @@ function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=
 	        <div id="povrsina-el">
 	            <div id="povrsina-el-el">
 	                <DigitalniBrojac sirina="60px" broj={brMina}/>
-	                <Gumb klik={klikStart}/>
+	                <Gumb klik={klikStart} emojiState={emojiState}/>
 	                <DigitalniBrojac sirina="60px" broj={brSec}/>
 	            </div>    
 	        </div>
@@ -48,7 +48,9 @@ class App extends React.Component {
 			brPreostalihMina: 0, 
 			brPreostalihPolja: 0,      // broj neoznacenih i neotvorenih polje
 			prviKlikSw: false,         // postavljamo na true kada igrac klikne prvi put na polje
-			brSec: 0                   // brojac sekundi
+			brSec: 0,                  // brojac sekundi
+			emojiState: 0,             // za 0/1/2 zadajemo sretnog/gubitnickog/pobjednickog emojia
+			gameOverSw: false          // za true igra je zaustavljena
 		}
 		
 		this.timerRef = null;
@@ -62,6 +64,8 @@ class App extends React.Component {
 		this.praznoPoljeSw = this.praznoPoljeSw.bind(this);
 		this.nadodajPolje = this.nadodajPolje.bind(this);
 		this.inicirajTimer = this.inicirajTimer.bind(this);
+		this.gameOver = this.gameOver.bind(this);
+		this.gameOverPobjeda = this.gameOverPobjeda.bind(this);
 	}
 	
 	componentDidMount() {
@@ -141,6 +145,8 @@ class App extends React.Component {
 	
 	kliknutoPolje(event, e, sw) {
 		event.preventDefault();
+		if (this.state.gameOverSw)  return null; // nema klika, igra je zaustavljena
+		
 		if (sw) {
 			console.log("Upravo si kliknuo lijevi gumb. " + Math.random());
 		} else {
@@ -158,9 +164,10 @@ class App extends React.Component {
 		if (this.state.poljeSw[y][x]  === "otvoreno")  return null; // klik na otvoreno polje, nista se ne dogada
 		
 		if (!sw) {  // postavljamo/uklanjamo zastavicu
+			let brPre = null;
 			this.setState((prevState)=>{ 
 				let brZas = prevState.brPreostalihMina;
-				let brPre = prevState.brPreostalihPolja;
+				brPre = prevState.brPreostalihPolja;
 			    if (prevState.poljeSw[y][x] === "zatvoreno") {
 					prevState.poljeSw[y][x] = "zastava";
 					brZas--;
@@ -171,9 +178,16 @@ class App extends React.Component {
 					brPre++;
 				}
 				console.log("Broj PREOSTALIH polja je " + brPre);
+				if (brPre == 0)  this.gameOverPobjeda();
 				return {poljeSw: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw), 
 					    brPreostalihMina: brZas, brPreostalihPolja: brPre};
 			})
+			
+			console.log("igramo se sa zastavicom. " + brPre);
+			if (false && brPre == 0) {
+				this.gameOverPobjeda();
+				console.log("trebao bih pobijediti");
+			}
 			return null; 
 		} else if (this.state.poljeSw[y][x] == "zastava"){  // slucaj klika lijevim gumbom na zastavu
 			return null;
@@ -185,55 +199,64 @@ class App extends React.Component {
 			
 			let rez = this.vratiPraznaSusjednaPolja(x, y);
 			let brPre = this.state.brPreostalihPolja;
-			brPre -= rez.length;
+			
 			//let pp = this.state.poljeSw;
 			let pp = JSON.parse(JSON.stringify(this.state.poljeSw));
+			let brNeotvorenih = 0;
 			for (let i = 0; i < rez.length; i++) {
-				pp[ rez[i][1] ][ rez[i][0] ] = "otvoreno";
-				//console.log("otvaramo " + rez[i][0] + ", " + rez[i][1]);
+				if (pp[ rez[i][1] ][ rez[i][0] ] !== "otvoreno") {
+				    pp[ rez[i][1] ][ rez[i][0] ] = "otvoreno";
+				    brNeotvorenih++;
+				}
 			}
+			brPre -= brNeotvorenih;
 			
+			console.log("Broj pronadenih polja je " + rez.length);
 			console.log("Broj PREOSTALIH polja je " + brPre);
 			this.setState((prevState) => {
 				return {brPreostalihPolja: brPre, poljeSw: pp, poljeDisplay: this.vratiDisplay(prevState.polje, pp)}});
 			
-			console.log("Popis praznih polja: ");
-			for (let i = 0; i < -1*rez.length; i++) {
-				console.log("(" + rez[i][0] + "," + rez[i][1] + ")");
-			}
+            if (brPre == 0)  this.gameOverPobjeda();
 			
 		} else {
-		  
-		  
-		 if (false) { 
-		  //console.log("otvaramo polje... " + Math.random());
-		  this.setState((prevState)=>{
-			     let pp1 = JSON.parse(JSON.stringify(prevState.poljeSw));
-			 //if (prevState.poljeSw[y][x] !== "zastava") {
-			     if (pp1[y][x] !== "zastava") {
-				     pp1[y][x]  = "otvoreno";
-				     return {poljeSw: pp1, poljeDisplay: this.vratiDisplay(prevState.polje, pp1)};
-				 }
-			 //} 
-			  
-		  });
-		 }
-		  
-		  // slucaj klika na zatvoreno polje bez zastave
-		  this.setState((prevState)=>{
-			         console.log("Broj PREOSTALIH polja je " + prevState.brPreostalihPolja-1);
+		  	
+		  	// klik na minu, game over
+		  	if (this.state.polje[y][x] == "mina") {	
+			    this.gameOver(x, y);
+			} else {
+		  		  
+		    // slucaj klika na zatvoreno polje bez zastave
+		      if (this.state.brPreostalihPolja == 1)  this.gameOverPobjeda();
+		      
+		      this.setState((prevState)=>{
+			         console.log("Broj PREOSTALIH polja je " + (prevState.brPreostalihPolja-1));
 				     prevState.poljeSw[y][x]  = "otvoreno";
 				     return {poljeSw: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw),
-						     brPreostalihPolja: prevState.brPreostalihPolja-1};
-				 
-			
-			  
-		  });
+						     brPreostalihPolja: prevState.brPreostalihPolja-1}; 
+		      });
+		    }  
 		    
 		  
 		  console.log("Broj PREOSTALIH polja je " + this.state.brPreostalihPolja);  
 			
 		}
+	}
+	
+	gameOver(x, y) {
+		console.log("kliknuo si na minu. GAME OVER!");
+		clearInterval(this.timerRef);
+		this.setState((prevState)=>{
+			prevState.polje[y][x] = "mina-crveno";
+			prevState.poljeSw[y][x] = "otvoreno";
+			return {poljeSw: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw),
+				    polje: prevState.polje, emojiState: 1, gameOverSw: true};
+		});
+	}
+	
+	gameOverPobjeda(x, y) {
+		console.log("Upravo si otvorio sva polja. Cestitamo! ");
+		clearInterval(this.timerRef);
+		this.setState({emojiState: 2, gameOverSw: true});
 	}
 			
 	inicirajPolje() {
@@ -284,7 +307,7 @@ class App extends React.Component {
 			clearInterval(this.timerRef);
 		}
 		this.setState((prevState)=>{return {...prevState, brPreostalihMina: prevState.brMina, polje: pp1, brSec: 0, brPreostalihPolja: prevState.nx * prevState.ny, 
-			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2, prviKlikSw: false}});
+			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2, prviKlikSw: false, emojiState: 0, gameOverSw: false}});
 	}
 	
 	vratiDisplay(polje, poljeSw) {
@@ -365,7 +388,7 @@ class App extends React.Component {
 	render() {
 		return (
 		    <div className="pokus">
-	            <Povrsina polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje}/>
+	            <Povrsina polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>
 	        </div>
 		)
 	}
