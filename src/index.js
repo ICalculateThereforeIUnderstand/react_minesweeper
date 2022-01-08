@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { Gumb} from "./gumb.js";
-import { Ploca } from "./ploca.js";
+import { Ploca, Menu } from "./ploca.js";
 import { DigitalniBrojac } from "./digitalniBrojac.js";
 
 let cont = document.querySelector("#cont");
@@ -10,14 +10,23 @@ let cont = document.querySelector("#cont");
 
 function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0}) {
 	const [matrica, setMatrica] = React.useState(polje);
+	const r = React.useRef();
+	const r1 = React.useRef();
 	
 	React.useEffect(()=>{
 		setMatrica(polje);
+		
+		let ny = polje.length;
+		let nx = 10;
+		if (ny !== 0)  nx = polje[0].length;
+		
+		dodajStilove(r.current, {height: (ny*27 + 120) + "px", width: (nx*27 + 40) + "px", backgroundColor: "yellow"});
+		dodajStilove(r1.current, {height: (ny*27 + 120 - 80) + "px"});
+		
 	}, [polje]);
 	
-	
 	return (
-	    <div id="povrsina">
+	    <div id="povrsina" ref={r}>
 	        <div id="povrsina-el">
 	            <div id="povrsina-el-el">
 	                <DigitalniBrojac sirina="60px" broj={brMina}/>
@@ -25,7 +34,7 @@ function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=
 	                <DigitalniBrojac sirina="60px" broj={brSec}/>
 	            </div>    
 	        </div>
-	        <div id="povrsina-el1">
+	        <div id="povrsina-el1" ref={r1}>
 	            <Ploca polje={polje} klikPolje={klikPolje}/>
 	        </div>
 	    </div>
@@ -66,6 +75,7 @@ class App extends React.Component {
 		this.inicirajTimer = this.inicirajTimer.bind(this);
 		this.gameOver = this.gameOver.bind(this);
 		this.gameOverPobjeda = this.gameOverPobjeda.bind(this);
+		this.kliknutiMenu = this.kliknutiMenu.bind(this);
 	}
 	
 	componentDidMount() {
@@ -381,21 +391,51 @@ class App extends React.Component {
 		
 		
 	    }
-
 			
+	}
+	
+	kliknutiMenu(e) {
+		console.log("kliknuo si na " + e + "  " + Math.random());
+		
+		switch (e) {
+			case "beginner":
+			    this.setState(()=>{return {nx: 9, ny: 9, brMina: 10}}, this.inicirajPolje);
+			    //this.inicirajPolje();
+			    break;
+			case "intermediate":
+			    this.setState(()=>{return {nx: 16, ny: 16, brMina: 40}}, this.inicirajPolje);
+			    //this.inicirajPolje();
+			    break;
+			case "expert":
+			    this.setState(()=>{return {nx: 30, ny: 16, brMina: 99}}, this.inicirajPolje);
+			    //this.inicirajPolje();
+			    break;
+			case "custom":
+			    break;
+			default:
+			    console.log("POGRESAN argument, ta opcija ne postoji u izborniku");
+		}
 	}
 	
 	render() {
 		return (
-		    <div className="pokus">
-	            <Povrsina polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>
+		    <div id="strana">
+		        <Menu klik={this.kliknutiMenu}/>
+	            <Povrsina polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>   
 	        </div>
 		)
 	}
 }
 
 ReactDOM.render(
-    <App/>,
+    <div className="pokus">
+        <App/>
+    </div>,
     cont
 )
 
+function dodajStilove(el, stilovi) {
+    for (let key in stilovi) {
+	    el.style[key] = stilovi[key];
+	}
+}

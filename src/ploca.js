@@ -80,6 +80,7 @@ export function Ploca({polje=[], klikPolje=defaultFun}) {
 	const [matrica, setMatrica] = React.useState([]);
 	const [nx, setNx] = React.useState(0);
 	const [ny, setNy] = React.useState(0);
+	const r = React.useRef();
 	
 	React.useEffect(()=> {
 		if (polje.length === 0) {
@@ -89,8 +90,14 @@ export function Ploca({polje=[], klikPolje=defaultFun}) {
 			setNx(polje[0].length);
 			setNy(polje.length);
 			setMatrica(polje);
-		}		
+		}
+			
 	}, [polje]);
+	
+	React.useEffect(()=>{
+		dodajStilove(r.current, {gridTemplateRows: "repeat(" + ny + ", 25px)", gridTemplateColumns: "repeat(" + nx + ", 25px)",
+			                   height: (ny*(25+2)+1) + "px", width: (nx*(25+2)+1) + "px"});	
+	}, [nx, ny]);
 	
 	function generirajElemente() {
 		let poljee = [];
@@ -111,9 +118,34 @@ export function Ploca({polje=[], klikPolje=defaultFun}) {
 	
 	
     return (
-	    <div className="ploca">
+	    <div className="ploca" ref={r}>
 	        {generirajElemente(nx, ny)}
 	    </div>
 	)
 	
+}
+
+export function Menu({klik=defaultFun}) {
+	return (
+	    <div id="menu">
+	        <div className="menu-el" onClick={()=>{klik("beginner")}}>
+	            <p>Beginner</p>
+	        </div>
+	        <div className="menu-el" onClick={()=>{klik("intermediate")}}>
+	            <p>Intermediate</p>
+	        </div>
+	        <div className="menu-el" onClick={()=>{klik("expert")}}>
+	            <p>Expert</p>
+	        </div>
+	        <div className="menu-el" onClick={()=>{klik("custom")}}>
+	            <p>Custom</p>
+	        </div>
+	    </div>
+	)
+}
+
+function dodajStilove(el, stilovi) {
+    for (let key in stilovi) {
+	    el.style[key] = stilovi[key];
+	}
 }
