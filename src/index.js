@@ -8,7 +8,7 @@ import { DigitalniBrojac } from "./digitalniBrojac.js";
 let cont = document.querySelector("#cont");
 
 
-function Povrsina({polje=[], brMina=0, klikPolje=defaultFun, klikStart=defaultFun}) {
+function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun}) {
 	const [matrica, setMatrica] = React.useState(polje);
 	
 	React.useEffect(()=>{
@@ -22,7 +22,7 @@ function Povrsina({polje=[], brMina=0, klikPolje=defaultFun, klikStart=defaultFu
 	            <div id="povrsina-el-el">
 	                <DigitalniBrojac sirina="60px" broj={brMina}/>
 	                <Gumb klik={klikStart}/>
-	                <DigitalniBrojac sirina="60px" broj={456}/>
+	                <DigitalniBrojac sirina="60px" broj={brSec}/>
 	            </div>    
 	        </div>
 	        <div id="povrsina-el1">
@@ -45,23 +45,38 @@ class App extends React.Component {
 			nx: 11,
 			ny: 9,
 			brMina: 11,
-			brPreostalihMina: 0
+			brPreostalihMina: 0, 
+			brPreostalihPolja: 0,      // broj neoznacenih i neotvorenih polje
+			prviKlikSw: false,         // postavljamo na true kada igrac klikne prvi put na polje
+			brSec: 0                   // brojac sekundi
 		}
+		
+		this.timerRef = null;
 		
 		this.mina = this.mina.bind(this);
 		this.brSusjednihMina = this.brSusjednihMina.bind(this);
 		this.inicirajPolje = this.inicirajPolje.bind(this);
 		this.kliknutoPolje = this.kliknutoPolje.bind(this);
-		this.kliknutoPolje1 = this.kliknutoPolje1.bind(this);
 		this.vratiDisplay = this.vratiDisplay.bind(this);
 		this.vratiPraznaSusjednaPolja = this.vratiPraznaSusjednaPolja.bind(this);
 		this.praznoPoljeSw = this.praznoPoljeSw.bind(this);
 		this.nadodajPolje = this.nadodajPolje.bind(this);
+		this.inicirajTimer = this.inicirajTimer.bind(this);
 	}
 	
 	componentDidMount() {
 		this.inicirajPolje();
 		//setInterval(()=>{this.inicirajPolje();}, 5000);
+	}
+	
+	inicirajTimer() {
+		if (this.timerRef !== null) {
+		    clearInterval(this.timerRef);
+	    }
+		
+		this.setState({brSec: 0});
+	    this.timerRef = setInterval(()=>{this.setState((prevState)=>{return {brSec: prevState.brSec + 1}})}, 1000);
+		
 	}
 	
 	praznoPoljeSw(polje, x, y) {
@@ -124,83 +139,103 @@ class App extends React.Component {
 		return rez;
 	}
 	
-	kliknutoPolje1(e) {
+	kliknutoPolje(event, e, sw) {
+		event.preventDefault();
+		if (sw) {
+			console.log("Upravo si kliknuo lijevi gumb. " + Math.random());
+		} else {
+			console.log("Upravo si kliknuo desni gumb. " + Math.random());
+		}
 		let poz = parseInt(e);
 		let x = poz % this.state.nx;
 		let y = Math.floor(poz / this.state.nx);
 		console.log("kliknuo si polje (" + x + ", " + y + ")  "  +  this.state.polje[y][x]);
+		if (!this.state.prviKlikSw) {
+			this.state.prviKlikSw = true;
+			this.inicirajTimer();
+		}
 		
+		if (this.state.poljeSw[y][x]  === "otvoreno")  return null; // klik na otvoreno polje, nista se ne dogada
+		
+		if (!sw) {  // postavljamo/uklanjamo zastavicu
+			this.setState((prevState)=>{ 
+				let brZas = prevState.brPreostalihMina;
+				let brPre = prevState.brPreostalihPolja;
+			    if (prevState.poljeSw[y][x] === "zatvoreno") {
+					prevState.poljeSw[y][x] = "zastava";
+					brZas--;
+					brPre--;
+				} else {
+					prevState.poljeSw[y][x] = "zatvoreno";
+					brZas++;
+					brPre++;
+				}
+				console.log("Broj PREOSTALIH polja je " + brPre);
+				return {poljeSw: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw), 
+					    brPreostalihMina: brZas, brPreostalihPolja: brPre};
+			})
+			return null; 
+		} else if (this.state.poljeSw[y][x] == "zastava"){  // slucaj klika lijevim gumbom na zastavu
+			return null;
+		}
+		
+		// ovdje program dolazi ako se radi o kliku lijevim gumbom misa na zatvoreno polje
 		if (this.state.polje[y][x] == "prazno") {
 			console.log("polje je prazno... " + Math.random());
 			
 			let rez = this.vratiPraznaSusjednaPolja(x, y);
+			let brPre = this.state.brPreostalihPolja;
+			brPre -= rez.length;
 			//let pp = this.state.poljeSw;
 			let pp = JSON.parse(JSON.stringify(this.state.poljeSw));
 			for (let i = 0; i < rez.length; i++) {
 				pp[ rez[i][1] ][ rez[i][0] ] = "otvoreno";
-				console.log("otvaramo " + rez[i][0] + ", " + rez[i][1]);
+				//console.log("otvaramo " + rez[i][0] + ", " + rez[i][1]);
 			}
 			
-			this.setState((prevState) => {return {poljeSw: pp, poljeDisplay: this.vratiDisplay(prevState.polje, pp)}});
+			console.log("Broj PREOSTALIH polja je " + brPre);
+			this.setState((prevState) => {
+				return {brPreostalihPolja: brPre, poljeSw: pp, poljeDisplay: this.vratiDisplay(prevState.polje, pp)}});
 			
 			console.log("Popis praznih polja: ");
 			for (let i = 0; i < -1*rez.length; i++) {
 				console.log("(" + rez[i][0] + "," + rez[i][1] + ")");
 			}
-		} else {
-			this.setState((prevState)=> {
-		        let p = prevState.poljeSw[y][x];
-		        switch (p) {
-				    case "zatvoreno":
-				        p = "zastava";
-				        break;
-				    case "zastava":
-				        p = "otvoreno";
-				        break;
-				    case "otvoreno":
-				        p = "zatvoreno";
-				        break;
-				    default:
-				        console.log("Dogodila se nekakva POGRESKA...");
-				        break;
-			    }
-			    prevState.poljeSw[y][x] = p;
 			
-			    return {poljeSW: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw)};
-		    })
+		} else {
+		  
+		  
+		 if (false) { 
+		  //console.log("otvaramo polje... " + Math.random());
+		  this.setState((prevState)=>{
+			     let pp1 = JSON.parse(JSON.stringify(prevState.poljeSw));
+			 //if (prevState.poljeSw[y][x] !== "zastava") {
+			     if (pp1[y][x] !== "zastava") {
+				     pp1[y][x]  = "otvoreno";
+				     return {poljeSw: pp1, poljeDisplay: this.vratiDisplay(prevState.polje, pp1)};
+				 }
+			 //} 
+			  
+		  });
+		 }
+		  
+		  // slucaj klika na zatvoreno polje bez zastave
+		  this.setState((prevState)=>{
+			         console.log("Broj PREOSTALIH polja je " + prevState.brPreostalihPolja-1);
+				     prevState.poljeSw[y][x]  = "otvoreno";
+				     return {poljeSw: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw),
+						     brPreostalihPolja: prevState.brPreostalihPolja-1};
+				 
+			
+			  
+		  });
+		    
+		  
+		  console.log("Broj PREOSTALIH polja je " + this.state.brPreostalihPolja);  
 			
 		}
 	}
-		
-	kliknutoPolje(e) {
-		let poz = parseInt(e);
-		let x = poz % this.state.nx;
-		let y = Math.floor(poz / this.state.nx);
-		
-		this.setState((prevState)=> {
-		    let p = prevState.poljeSw[y][x];
-		    switch (p) {
-				case "zatvoreno":
-				    p = "zastava";
-				    break;
-				case "zastava":
-				    p = "otvoreno";
-				    break;
-				case "otvoreno":
-				    p = "zatvoreno";
-				    break;
-				default:
-				    console.log("Dogodila se nekakva POGRESKA...");
-				    break;
-			}
-			prevState.poljeSw[y][x] = p;
 			
-			return {poljeSW: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw)};
-			
-		})
-		
-	}
-	
 	inicirajPolje() {
 		let pp1 = [];
 		let pp2 = [];
@@ -245,8 +280,11 @@ class App extends React.Component {
 			}
 		}
 		
-		this.setState((prevState)=>{return {...prevState, brPreostalihMina: prevState.brMina, polje: pp1, 
-			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2}});
+		if (this.timerRef !== null) {
+			clearInterval(this.timerRef);
+		}
+		this.setState((prevState)=>{return {...prevState, brPreostalihMina: prevState.brMina, polje: pp1, brSec: 0, brPreostalihPolja: prevState.nx * prevState.ny, 
+			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2, prviKlikSw: false}});
 	}
 	
 	vratiDisplay(polje, poljeSw) {
@@ -327,7 +365,7 @@ class App extends React.Component {
 	render() {
 		return (
 		    <div className="pokus">
-	            <Povrsina polje={this.state.poljeDisplay} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje1} klikStart={this.inicirajPolje}/>
+	            <Povrsina polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje}/>
 	        </div>
 		)
 	}

@@ -70,7 +70,7 @@ function Polje({tip="prazno", klikPolje=defaultFun, id="-1"}) {
 	}, [tip]);
 	
 	return (
-	    <div className={klasa} onClick={()=>{klikPolje(idOznaka)}}>
+	    <div className={klasa} onClick={(e)=>{klikPolje(e, idOznaka, true)}} onContextMenu={(e)=>{klikPolje(e, idOznaka, false)}}>
 	        {broj}
 	    </div>
 	)
