@@ -79,3 +79,32 @@
     color: #555;
     cursor: pointer;
 }
+
+#forma-div {
+    height: 80px;
+    width: 600px;
+    background-color: yellow;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+.forma-el {
+    height: 80px;
+    width: 130px;
+    background-color: red;
+    margin: 0px 20px 0px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.input {
+    width: 34px;
+    margin-left: 5px;
+}
+
+.forma-el-label { font-weight: 600; }

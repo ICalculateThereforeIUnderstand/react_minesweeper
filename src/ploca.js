@@ -144,6 +144,68 @@ export function Menu({klik=defaultFun}) {
 	)
 }
 
+export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun}) {
+	const [x, setX] = React.useState(nx);
+	const [y, setY] = React.useState(ny);
+	const [mineBr, setMineBr] = React.useState(brMina);
+	
+	function submitaj(e) {
+		e.preventDefault();
+		if (x > 0  &&  y > 0  &&  mineBr < x*y) {
+		    submitKlik(x, y, mineBr);
+		} else {
+			setX(3);
+			setY(3);
+			setMineBr(3);
+			submitKlik(3, 3, 3);
+		}
+	}
+	
+	function unesi(e, setFun) {
+		let v = e.target.value;
+		console.log("unos:" + v + "      /   " + Math.random());
+		console.log("posljednje slovo je " + v.substr(-1));
+		switch (v.substr(-1)) {
+			case "0":
+			case "1":
+			case "2":
+			case "3":
+			case "4":
+			case "5":
+			case "6":
+			case "7":
+			case "8":
+			case "9":
+			case "":
+			    setFun(v);
+			    break;
+		}
+	}
+	
+	return (
+	    <form id="forma" onSubmit={submitaj}>
+	        <div id="forma-div">
+	            <div className="forma-el">
+	                <label className="forma-el-label" htmlFor="width">Width:</label>
+	                <input type="text" id="width" maxlength="4" className="input" name="sirina" value={x} onChange={(e)=>{unesi(e, setX)}}/>
+	            </div>
+	            <div className="forma-el">
+	                <label className="forma-el-label" htmlFor="height">Height:</label>
+	                <input type="text" id="height" maxlength="4" className="input" name="visina" value={y} onChange={(e)=>{unesi(e, setY)}}/>
+	            </div>
+	            <div className="forma-el">
+	                <label className="forma-el-label" htmlFor="mines">Mines:</label>
+	                <input type="text" id="mines" maxlength="3" className="input" name="mine" value={mineBr} onChange={(e)=>{unesi(e, setMineBr)}}/>
+	            </div>
+	            <div className="forma-el">
+	                <button type="submit">Update</button>
+	            </div>
+	        </div>  
+	    </form>  
+	    
+	)
+}
+
 function dodajStilove(el, stilovi) {
     for (let key in stilovi) {
 	    el.style[key] = stilovi[key];
