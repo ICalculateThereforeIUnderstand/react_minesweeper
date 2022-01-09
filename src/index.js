@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { Gumb} from "./gumb.js";
-import { Ploca, Menu } from "./ploca.js";
+import { Ploca, Menu, Forma } from "./ploca.js";
 import { DigitalniBrojac } from "./digitalniBrojac.js";
 
 let cont = document.querySelector("#cont");
@@ -10,8 +10,12 @@ let cont = document.querySelector("#cont");
 
 function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0}) {
 	const [matrica, setMatrica] = React.useState(polje);
+	const [sw, setSw] = React.useState(true);
+	const [sw1, setSw1] = React.useState(true);
 	const r = React.useRef();
 	const r1 = React.useRef();
+	const r2 = React.useRef();
+	const r3 = React.useRef();
 	
 	React.useEffect(()=>{
 		setMatrica(polje);
@@ -20,6 +24,18 @@ function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=
 		let nx = 10;
 		if (ny !== 0)  nx = polje[0].length;
 		
+		if (nx < 6) {
+			setSw(false);
+			if (nx < 2) {
+			    setSw1(false);	
+			} else {
+				setSw1(true);
+			}
+		} else {
+			setSw(true);
+			setSw1(true);
+		}
+		
 		dodajStilove(r.current, {height: (ny*27 + 120) + "px", width: (nx*27 + 40) + "px", backgroundColor: "yellow"});
 		dodajStilove(r1.current, {height: (ny*27 + 120 - 80) + "px"});
 		
@@ -27,12 +43,24 @@ function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=
 	
 	return (
 	    <div id="povrsina" ref={r}>
-	        <div id="povrsina-el">
-	            <div id="povrsina-el-el">
-	                <DigitalniBrojac sirina="60px" broj={brMina}/>
-	                <Gumb klik={klikStart} emojiState={emojiState}/>
-	                <DigitalniBrojac sirina="60px" broj={brSec}/>
-	            </div>    
+	        <div id="povrsina-el">	            
+	            {sw ? 
+					<div id="povrsina-el-el">
+					    <DigitalniBrojac sirina="60px" broj={brMina}/>
+					    <Gumb ref={r2} klik={klikStart} emojiState={emojiState}/>
+	                    <DigitalniBrojac ref={r3} sirina="60px" broj={brSec}/> 
+					</div> : 
+					    <>
+			            {sw1 ? 
+							<div id="povrsina-el-el" onClick={klikStart}>
+							    <DigitalniBrojac sirina="60px" broj={brMina}/>
+							</div> :
+							<div id="povrsina-el-el">
+							    <Gumb ref={r2} klik={klikStart} emojiState={emojiState}/>
+							</div>
+						}
+                        </>						
+				}
 	        </div>
 	        <div id="povrsina-el1" ref={r1}>
 	            <Ploca polje={polje} klikPolje={klikPolje}/>
@@ -59,7 +87,8 @@ class App extends React.Component {
 			prviKlikSw: false,         // postavljamo na true kada igrac klikne prvi put na polje
 			brSec: 0,                  // brojac sekundi
 			emojiState: 0,             // za 0/1/2 zadajemo sretnog/gubitnickog/pobjednickog emojia
-			gameOverSw: false          // za true igra je zaustavljena
+			gameOverSw: false,         // za true igra je zaustavljena
+			formaHideSw: false         // za true skriva dropdown input formu
 		}
 		
 		this.timerRef = null;
@@ -76,6 +105,7 @@ class App extends React.Component {
 		this.gameOver = this.gameOver.bind(this);
 		this.gameOverPobjeda = this.gameOverPobjeda.bind(this);
 		this.kliknutiMenu = this.kliknutiMenu.bind(this);
+		this.formaPostaviParametre = this.formaPostaviParametre.bind(this);
 	}
 	
 	componentDidMount() {
@@ -317,7 +347,8 @@ class App extends React.Component {
 			clearInterval(this.timerRef);
 		}
 		this.setState((prevState)=>{return {...prevState, brPreostalihMina: prevState.brMina, polje: pp1, brSec: 0, brPreostalihPolja: prevState.nx * prevState.ny, 
-			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2, prviKlikSw: false, emojiState: 0, gameOverSw: false}});
+			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2, prviKlikSw: false, emojiState: 0, 
+			                                gameOverSw: false}});
 	}
 	
 	vratiDisplay(polje, poljeSw) {
@@ -399,28 +430,35 @@ class App extends React.Component {
 		
 		switch (e) {
 			case "beginner":
-			    this.setState(()=>{return {nx: 9, ny: 9, brMina: 10}}, this.inicirajPolje);
+			    this.setState(()=>{return {nx: 9, ny: 9, brMina: 10, formaHideSw: true}}, this.inicirajPolje);
 			    //this.inicirajPolje();
 			    break;
 			case "intermediate":
-			    this.setState(()=>{return {nx: 16, ny: 16, brMina: 40}}, this.inicirajPolje);
+			    this.setState(()=>{return {nx: 16, ny: 16, brMina: 40, formaHideSw: true}}, this.inicirajPolje);
 			    //this.inicirajPolje();
 			    break;
 			case "expert":
-			    this.setState(()=>{return {nx: 30, ny: 16, brMina: 99}}, this.inicirajPolje);
+			    this.setState(()=>{return {nx: 30, ny: 16, brMina: 99, formaHideSw: true}}, this.inicirajPolje);
 			    //this.inicirajPolje();
 			    break;
 			case "custom":
+			    this.setState(()=>{return {formaHideSw: false}}, this.inicirajPolje);
 			    break;
 			default:
 			    console.log("POGRESAN argument, ta opcija ne postoji u izborniku");
 		}
 	}
 	
+	formaPostaviParametre(x, y, minaBr) {
+		this.setState(()=>{return {nx: x, ny: y, brMina: minaBr}}, this.inicirajPolje);
+		console.log("postavljam parametre u glavnoj komponenti: " + x + " / " + y + " / " + minaBr + "   " + Math.random());	
+	}
+	
 	render() {
 		return (
 		    <div id="strana">
 		        <Menu klik={this.kliknutiMenu}/>
+		        <Forma hideSw={this.state.formaHideSw} nx={this.state.nx} ny={this.state.ny} brMina={this.state.brMina} submitKlik={this.formaPostaviParametre}/>
 	            <Povrsina polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>   
 	        </div>
 		)
@@ -428,7 +466,7 @@ class App extends React.Component {
 }
 
 ReactDOM.render(
-    <div className="pokus">
+    <div className="ekran">
         <App/>
     </div>,
     cont

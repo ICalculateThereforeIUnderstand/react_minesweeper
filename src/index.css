@@ -3,13 +3,14 @@ body, html {
     padding: 0;
 }
 
-.pokus {
-    height: 100vh;
-    width: 100w;
+.ekran {
+    min-height: 100vh;
+    min-width: 100vw;
     background-color: pink;
     display: flex;
     justify-content: center;
 }
+
 
 .el {
     height: 25px;
@@ -26,6 +27,7 @@ body, html {
 #strana {
     /*background-color: red;*/
     margin-top: 100px;
+    min-width: 80vw;
 }
 
 #povrsina {
@@ -51,7 +53,8 @@ body, html {
     background-color: #bbb;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
+    justify-content: center;
     align-items: center;
     box-sizing: border-box;
     border-left: 4px solid #555;
