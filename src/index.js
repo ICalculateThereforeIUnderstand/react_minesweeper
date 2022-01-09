@@ -59,10 +59,7 @@ function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=
 							    <Gumb ref={r2} klik={klikStart} emojiState={emojiState}/>
 							</div>
 						}
-                        </>
-							
-							
-										
+                        </>						
 				}
 	        </div>
 	        <div id="povrsina-el1" ref={r1}>
@@ -90,7 +87,8 @@ class App extends React.Component {
 			prviKlikSw: false,         // postavljamo na true kada igrac klikne prvi put na polje
 			brSec: 0,                  // brojac sekundi
 			emojiState: 0,             // za 0/1/2 zadajemo sretnog/gubitnickog/pobjednickog emojia
-			gameOverSw: false          // za true igra je zaustavljena
+			gameOverSw: false,         // za true igra je zaustavljena
+			formaHideSw: false         // za true skriva dropdown input formu
 		}
 		
 		this.timerRef = null;
@@ -349,7 +347,8 @@ class App extends React.Component {
 			clearInterval(this.timerRef);
 		}
 		this.setState((prevState)=>{return {...prevState, brPreostalihMina: prevState.brMina, polje: pp1, brSec: 0, brPreostalihPolja: prevState.nx * prevState.ny, 
-			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2, prviKlikSw: false, emojiState: 0, gameOverSw: false}});
+			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2, prviKlikSw: false, emojiState: 0, 
+			                                gameOverSw: false}});
 	}
 	
 	vratiDisplay(polje, poljeSw) {
@@ -431,18 +430,19 @@ class App extends React.Component {
 		
 		switch (e) {
 			case "beginner":
-			    this.setState(()=>{return {nx: 9, ny: 9, brMina: 10}}, this.inicirajPolje);
+			    this.setState(()=>{return {nx: 9, ny: 9, brMina: 10, formaHideSw: true}}, this.inicirajPolje);
 			    //this.inicirajPolje();
 			    break;
 			case "intermediate":
-			    this.setState(()=>{return {nx: 16, ny: 16, brMina: 40}}, this.inicirajPolje);
+			    this.setState(()=>{return {nx: 16, ny: 16, brMina: 40, formaHideSw: true}}, this.inicirajPolje);
 			    //this.inicirajPolje();
 			    break;
 			case "expert":
-			    this.setState(()=>{return {nx: 30, ny: 16, brMina: 99}}, this.inicirajPolje);
+			    this.setState(()=>{return {nx: 30, ny: 16, brMina: 99, formaHideSw: true}}, this.inicirajPolje);
 			    //this.inicirajPolje();
 			    break;
 			case "custom":
+			    this.setState(()=>{return {formaHideSw: false}}, this.inicirajPolje);
 			    break;
 			default:
 			    console.log("POGRESAN argument, ta opcija ne postoji u izborniku");
@@ -458,7 +458,7 @@ class App extends React.Component {
 		return (
 		    <div id="strana">
 		        <Menu klik={this.kliknutiMenu}/>
-		        <Forma nx={this.state.nx} ny={this.state.ny} brMina={this.state.brMina} submitKlik={this.formaPostaviParametre}/>
+		        <Forma hideSw={this.state.formaHideSw} nx={this.state.nx} ny={this.state.ny} brMina={this.state.brMina} submitKlik={this.formaPostaviParametre}/>
 	            <Povrsina polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>   
 	        </div>
 		)
@@ -466,7 +466,7 @@ class App extends React.Component {
 }
 
 ReactDOM.render(
-    <div className="pokus">
+    <div className="ekran">
         <App/>
     </div>,
     cont

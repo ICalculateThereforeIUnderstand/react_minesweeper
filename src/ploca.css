@@ -81,9 +81,9 @@
 }
 
 #forma-div {
-    height: 80px;
+    height: 60px;
     width: 600px;
-    background-color: yellow;
+    /*background-color: yellow;*/
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -92,14 +92,24 @@
 }
 
 .forma-el {
-    height: 80px;
+    height: 60px;
     width: 130px;
-    background-color: red;
-    margin: 0px 20px 0px 10px;
+    /*background-color: red;*/
+    margin: 0px 0px 0px 0px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+}
+
+.forma-button {
+    height: 60px;
+    width: 130px;
+    /*background-color: blue;*/
+    margin: 0px 0px 0px 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .input {
