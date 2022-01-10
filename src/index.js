@@ -88,7 +88,8 @@ class App extends React.Component {
 			brSec: 0,                  // brojac sekundi
 			emojiState: 0,             // za 0/1/2 zadajemo sretnog/gubitnickog/pobjednickog emojia
 			gameOverSw: false,         // za true igra je zaustavljena
-			formaHideSw: false         // za true skriva dropdown input formu
+			formaHideSw: false,         // za true skriva dropdown input formu
+			noGuessSw: true            // za true oznacava pocetno polje
 		}
 		
 		this.timerRef = null;
@@ -106,6 +107,7 @@ class App extends React.Component {
 		this.gameOverPobjeda = this.gameOverPobjeda.bind(this);
 		this.kliknutiMenu = this.kliknutiMenu.bind(this);
 		this.formaPostaviParametre = this.formaPostaviParametre.bind(this);
+		this.pronadiRandomPraznoPolje = this.pronadiRandomPraznoPolje.bind(this);
 	}
 	
 	componentDidMount() {
@@ -196,8 +198,20 @@ class App extends React.Component {
 		let x = poz % this.state.nx;
 		let y = Math.floor(poz / this.state.nx);
 		console.log("kliknuo si polje (" + x + ", " + y + ")  "  +  this.state.polje[y][x]);
+				
 		if (!this.state.prviKlikSw) {
-			this.state.prviKlikSw = true;
+			if (this.state.noGuessSw) {  // no-guess mode je aktivan, prvi klik mora biti na krizic i to lijevim gumbom misa
+			    if (sw && this.state.poljeSw[y][x] == "krizic") {
+			        this.setState({prviKlikSw: true});
+			    } else {
+				    return null;  // prvim klikom nismo kliknuli na krizic, klik se ignorira
+			    }
+		    }
+			
+			
+			
+			//this.state.prviKlikSw = true;
+			this.setState({prviKlikSw: true})
 			this.inicirajTimer();
 		}
 		
@@ -208,7 +222,9 @@ class App extends React.Component {
 			this.setState((prevState)=>{ 
 				let brZas = prevState.brPreostalihMina;
 				brPre = prevState.brPreostalihPolja;
-			    if (prevState.poljeSw[y][x] === "zatvoreno") {
+				if (prevState.poljeSw[y][x] === "krizic") {
+					return null;  //  desni klik na krizic se ignorira
+				} else if (prevState.poljeSw[y][x] === "zatvoreno") {
 					prevState.poljeSw[y][x] = "zastava";
 					brZas--;
 					brPre--;
@@ -307,16 +323,7 @@ class App extends React.Component {
 			let ppp = [];
 			for (let j = 0; j < this.state.nx; j++) {
 				pp.push("prazno");
-				if (Math.random() < 1.5) {
-				    //ppp.push("otvoreno");
-				    ppp.push("zatvoreno");
-				} else {
-					if (Math.random() < 0.3) {
-					    ppp.push("zastava");
-				    } else {
-					    ppp.push("zatvoreno");
-					}
-				}
+				ppp.push("zatvoreno");  // jos moze biti otvoreno, zastava ili krizic
 		    }	
 		    pp1.push(pp);
 		    pp2.push(ppp);
@@ -343,12 +350,35 @@ class App extends React.Component {
 			}
 		}
 		
+		if (this.state.noGuessSw) {
+			let [x, y] = this.pronadiRandomPraznoPolje(pp1);
+			//console.log("postavili smo krizic na poziciju " + x + ", " + y);
+			pp2[y][x] = "krizic";
+			console.log("postavili smo krizic na poziciju " + x + ", " + y);
+		}
+		
 		if (this.timerRef !== null) {
 			clearInterval(this.timerRef);
 		}
 		this.setState((prevState)=>{return {...prevState, brPreostalihMina: prevState.brMina, polje: pp1, brSec: 0, brPreostalihPolja: prevState.nx * prevState.ny, 
 			                                poljeDisplay: this.vratiDisplay(pp1, pp2), poljeSw: pp2, prviKlikSw: false, emojiState: 0, 
 			                                gameOverSw: false}});
+	}
+	
+	pronadiRandomPraznoPolje(polje) {
+		let dulj2 = polje.length;
+		let dulj1 = polje[0].length;
+		//console.log("duljine su " + dulj1 + " / " + dulj2);
+		let rez = [];
+		for (let i = 0; i < dulj2; i++) {
+			for (let j = 0; j < dulj1; j++) {
+				if (polje[i][j] == "prazno") {
+					rez.push([j, i]);
+					//console.log("pronasli smo prazno mjesto " + Math.random());
+				}
+			}
+		}
+	    return rez[Math.floor(Math.random()*rez.length)];
 	}
 	
 	vratiDisplay(polje, poljeSw) {
@@ -365,6 +395,8 @@ class App extends React.Component {
 					re.push("zatvoreno");
 				} else if (tt === "zastava") {
 					re.push("zastava");
+				} else if (tt === "krizic") {
+					re.push("krizic");
 				}
 			}
 			rez.push(re);

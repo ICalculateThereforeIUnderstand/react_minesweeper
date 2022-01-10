@@ -118,3 +118,28 @@
 }
 
 .forma-el-label { font-weight: 600; }
+
+.krizic {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    transform: rotate(45deg);
+}
+
+.krizic-el1 {
+    height: 20%;
+    width: 80%;
+    background-color: green;
+    position: absolute;
+    top: 40%;
+    left: 10%;
+}
+
+.krizic-el2 {
+    height: 80%;
+    width: 20%;
+    background-color: green;
+    position: absolute;
+    top: 10%;
+    left: 40%;
+}

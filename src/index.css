@@ -72,3 +72,10 @@ body, html {
     align-items: center;
 }
 
+.pokusic {
+    height: 100px;
+    width: 100px;
+    background-color: yellow;
+}
+
+
