@@ -149,7 +149,7 @@ export function Ploca({polje=[], klikPolje=defaultFun}) {
 	
 	
     return (
-	    <div className="ploca" ref={r}>
+	    <div className="ploca" ref={r} onContextMenu={(e)=>{e.preventDefault()}}>
 	        {generirajElemente(nx, ny)}
 	    </div>
 	)

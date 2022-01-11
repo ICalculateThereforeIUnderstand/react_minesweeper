@@ -260,8 +260,10 @@ class App extends React.Component {
 			//let pp = this.state.poljeSw;
 			let pp = JSON.parse(JSON.stringify(this.state.poljeSw));
 			let brNeotvorenih = 0;
+			let korekcijaBrMina = 0;
 			for (let i = 0; i < rez.length; i++) {
 				if (pp[ rez[i][1] ][ rez[i][0] ] !== "otvoreno") {
+					if (pp[ rez[i][1] ][ rez[i][0] ] === "zastava") {korekcijaBrMina++; brNeotvorenih--}
 				    pp[ rez[i][1] ][ rez[i][0] ] = "otvoreno";
 				    brNeotvorenih++;
 				}
@@ -271,7 +273,8 @@ class App extends React.Component {
 			console.log("Broj pronadenih polja je " + rez.length);
 			console.log("Broj PREOSTALIH polja je " + brPre);
 			this.setState((prevState) => {
-				return {brPreostalihPolja: brPre, poljeSw: pp, poljeDisplay: this.vratiDisplay(prevState.polje, pp)}});
+				return {brPreostalihPolja: brPre, poljeSw: pp, poljeDisplay: this.vratiDisplay(prevState.polje, pp),
+					    brPreostalihMina: prevState.brPreostalihMina+korekcijaBrMina}});
 			
             if (brPre == 0)  this.gameOverPobjeda();
 			
