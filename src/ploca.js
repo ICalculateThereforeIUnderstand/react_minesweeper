@@ -1,5 +1,7 @@
 import React from "react";
 import "./ploca.css";
+import { FcSearch } from "react-icons/fc";
+import { IoIosArrowDown } from "react-icons/io";
 
 function defaultFun() { console.log("kliknuo si ali nisi postavio funkciju2.")}
 
@@ -156,7 +158,7 @@ export function Ploca({polje=[], klikPolje=defaultFun}) {
 	
 }
 
-export function Menu({klik=defaultFun, guessModeKlik=defaultFun}) {
+export function Menu({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFaktor=defaultFun}) {
 	const [sw, setSw] = React.useState(false);
 	
 	function checkboxToggle() {
@@ -187,6 +189,106 @@ export function Menu({klik=defaultFun, guessModeKlik=defaultFun}) {
 	                <label>Guess mode</label>
 	                <input type="checkbox" onChange={checkboxToggle}/>
 	            </form>
+	        </div>
+            <DropdownOpcije postaviSkalniFaktor={postaviSkalniFaktor}/>
+	    </div>
+	)
+}
+
+function DropdownOpcije({postaviSkalniFaktor=defaultFun}) {
+	const [sw, setSw] = React.useState(false);
+	const [odabraniBr, setOdabraniBr] = React.useState(25);
+	const r = React.useRef();
+	const r1 = React.useRef();
+	const r2 = React.useRef();
+	
+	React.useEffect(()=>{
+		document.addEventListener("click", zatvori);
+		
+		r1.current.addEventListener("mouseenter", hoveraj);
+        r1.current.addEventListener("mouseleave", odhoveraj);
+        
+	}, []);
+	
+	React.useEffect(()=>{
+		if (sw) {
+			r.current.style.display = "block";
+		} else {
+			r.current.style.display = "none";
+		}
+	}, [sw]);
+	
+	React.useEffect(()=>{
+		postaviSkalniFaktor(odabraniBr/25);
+	}, [odabraniBr]);
+
+	function hoveraj(e) {
+		e.stopPropagation();
+        r2.current.style.opacity = "1";
+        console.log("Hoveras... " + Math.random());
+    }
+    
+    function odhoveraj(e) {
+		e.stopPropagation();
+        r2.current.style.opacity = "0";
+        console.log("ODhoveras... " + Math.random());
+    }
+	
+	function odabirBrKlik(br) {
+		console.log("Kliknuo si na broj " + br + "  /  " + Math.random());
+		setOdabraniBr(br);
+		setSw(false);
+	}
+	
+	function zatvori() {
+		setSw(false);
+		console.log("trebao bi sada zatvoriti meni.  " + Math.random());
+	}
+	
+	function vratiPoljeElemenata() {
+		let rez = [];
+		for (let i = 11; i < 63; i += 2) {
+			rez.push(<DropdownElement key={i} br={i} klik={odabirBrKlik}/>)
+		}
+		return rez;
+	}
+	
+	return (
+	    <div className="menu-el-dropdown" onClick={(e)=>{e.stopPropagation(); setSw((prevSw)=>{return !prevSw; })}}>
+	        <div className="menu-el-dropdown-el1">
+	            <FcSearch className="menu-el-dropdown-el1-icon"/>
+	        </div>
+	        <div className="menu-el-dropdown-el2">
+	            <p className="menu-el-dropdown-el2-br">{odabraniBr}</p>
+	        </div>
+	        <div className="menu-el-dropdown-el3">
+	            <IoIosArrowDown/>
+	        </div>
+	        
+	        <div className="menu-el-dropdown-el4" ref={r}>
+	            {vratiPoljeElemenata()}
+	        </div>
+	        <div className="menu-el-dropdown-hoverPoruka" ref={r2}>
+	            <p>Zoom</p>
+	            <div className="menu-el-dropdown-hoverPoruka-pointer">
+	            </div>
+	        </div>
+	        
+	        <div className="menu-el-dropdown-hoverZona"  ref={r1}>
+	        </div>
+
+	    </div>	
+	)
+}
+
+function DropdownElement({br=0, klik=defaultFun}) {
+	return (
+	    <div className="menu-el-dropdown-el4-element" onClick={(e)=>{e.stopPropagation(); klik(br)}}>
+	        <div className="menu-el-dropdown-el4-element-el1">
+	            <FcSearch className="menu-el-dropdown-el1-icon"/>
+	        </div>
+	        <div className="menu-el-dropdown-el4-element-el2">
+	            <p>{br}</p>
 	        </div>
 	    </div>
 	)
