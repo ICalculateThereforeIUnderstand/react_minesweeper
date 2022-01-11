@@ -156,7 +156,18 @@ export function Ploca({polje=[], klikPolje=defaultFun}) {
 	
 }
 
-export function Menu({klik=defaultFun}) {
+export function Menu({klik=defaultFun, guessModeKlik=defaultFun}) {
+	const [sw, setSw] = React.useState(false);
+	
+	function checkboxToggle() {
+		setSw((prevSw) => {if (prevSw) {return false}; return true; })
+	}
+	
+	React.useEffect(()=>{
+		console.log("Novi prekidac je " + sw + "   " + Math.random());
+		guessModeKlik(sw)
+	}, [sw]);
+	
 	return (
 	    <div id="menu">
 	        <div className="menu-el" onClick={()=>{klik("beginner")}}>
@@ -170,6 +181,12 @@ export function Menu({klik=defaultFun}) {
 	        </div>
 	        <div className="menu-el" onClick={()=>{klik("custom")}}>
 	            <p>Custom</p>
+	        </div>
+	        <div className="menu-el1">
+	            <form className="menu-el-form">
+	                <label>Guess mode</label>
+	                <input type="checkbox" onChange={checkboxToggle}/>
+	            </form>
 	        </div>
 	    </div>
 	)

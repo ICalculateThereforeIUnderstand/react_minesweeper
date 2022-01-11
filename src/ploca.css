@@ -68,6 +68,17 @@
     /*background-color: yellow;*/
     height: 40px;
     font-family: sans-serif;
+    margin: 0px 20px 0px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+}
+
+.menu-el1 {
+    /*background-color: yellow;*/
+    height: 100%;
+    font-family: sans-serif;
     margin: 0px 30px 0px 10px;
     display: flex;
     justify-content: center;
@@ -78,6 +89,14 @@
 .menu-el:hover {
     color: #555;
     cursor: pointer;
+}
+
+.menu-el-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
 
 #forma-div {

@@ -89,7 +89,7 @@ class App extends React.Component {
 			emojiState: 0,             // za 0/1/2 zadajemo sretnog/gubitnickog/pobjednickog emojia
 			gameOverSw: false,         // za true igra je zaustavljena
 			formaHideSw: false,         // za true skriva dropdown input formu
-			noGuessSw: true            // za true oznacava pocetno polje
+			noGuessSw: false            // za true oznacava pocetno polje
 		}
 		
 		this.timerRef = null;
@@ -108,6 +108,7 @@ class App extends React.Component {
 		this.kliknutiMenu = this.kliknutiMenu.bind(this);
 		this.formaPostaviParametre = this.formaPostaviParametre.bind(this);
 		this.pronadiRandomPraznoPolje = this.pronadiRandomPraznoPolje.bind(this);
+		this.postaviNoGuessMode = this.postaviNoGuessMode.bind(this);
 	}
 	
 	componentDidMount() {
@@ -481,6 +482,10 @@ class App extends React.Component {
 		}
 	}
 	
+	postaviNoGuessMode(sw=false) {  // za true postavlja i pokrece no guess mode, za false standardni classic mode
+		this.setState(()=>{return {noGuessSw: sw}}, this.inicirajPolje);
+	}
+	
 	formaPostaviParametre(x, y, minaBr) {
 		this.setState(()=>{return {nx: x, ny: y, brMina: minaBr}}, this.inicirajPolje);
 		console.log("postavljam parametre u glavnoj komponenti: " + x + " / " + y + " / " + minaBr + "   " + Math.random());	
@@ -489,7 +494,7 @@ class App extends React.Component {
 	render() {
 		return (
 		    <div id="strana">
-		        <Menu klik={this.kliknutiMenu}/>
+		        <Menu klik={this.kliknutiMenu} guessModeKlik={this.postaviNoGuessMode}/>
 		        <Forma hideSw={this.state.formaHideSw} nx={this.state.nx} ny={this.state.ny} brMina={this.state.brMina} submitKlik={this.formaPostaviParametre}/>
 	            <Povrsina polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>   
 	        </div>
