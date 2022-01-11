@@ -8,8 +8,10 @@ import { DigitalniBrojac } from "./digitalniBrojac.js";
 let cont = document.querySelector("#cont");
 
 
-function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0}) {
+function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0}) {
 	const [matrica, setMatrica] = React.useState(polje);
+	const [x, setX] = React.useState(0);
+	const [y, setY] = React.useState(0);
 	const [sw, setSw] = React.useState(true);
 	const [sw1, setSw1] = React.useState(true);
 	const r = React.useRef();
@@ -18,11 +20,34 @@ function Povrsina({polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=
 	const r3 = React.useRef();
 	
 	React.useEffect(()=>{
+		
+		let st = window.getComputedStyle(r.current);
+		let vis = parseFloat(st.getPropertyValue('height'));
+		let sir = parseFloat(st.getPropertyValue('width'));
+		console.log("visina/sirina je " + vis + "/" + sir);
+		let visFak = -1*(1-skalniFaktor)*vis/2;
+		let sirFak = -1*(1-skalniFaktor)*sir/2;
+		console.log("pomaci:" + visFak);
+		console.log("pomaci:" + sirFak);
+		
+		dodajStilove(r.current, {transform: "scale(" + skalniFaktor + "," + skalniFaktor + ")", top: visFak + "px", left: sirFak + "px"});
+		
+		st = window.getComputedStyle(r.current);
+		vis = parseFloat(st.getPropertyValue('top'));
+		sir = parseFloat(st.getPropertyValue('left'));
+		console.log("top1/left1 je " + vis + "/" + sir);
+		
+		
+	}, [skalniFaktor, x, y]);
+	
+	React.useEffect(()=>{
 		setMatrica(polje);
 		
 		let ny = polje.length;
 		let nx = 10;
 		if (ny !== 0)  nx = polje[0].length;
+		setX(nx);
+		setY(ny);
 		
 		if (nx < 6) {
 			setSw(false);
@@ -89,7 +114,8 @@ class App extends React.Component {
 			emojiState: 0,             // za 0/1/2 zadajemo sretnog/gubitnickog/pobjednickog emojia
 			gameOverSw: false,         // za true igra je zaustavljena
 			formaHideSw: false,         // za true skriva dropdown input formu
-			noGuessSw: false            // za true oznacava pocetno polje
+			noGuessSw: false,           // za true oznacava pocetno polje
+			skalniFaktor: 1             // za 1 je display u normalnoj velicini
 		}
 		
 		this.timerRef = null;
@@ -109,6 +135,7 @@ class App extends React.Component {
 		this.formaPostaviParametre = this.formaPostaviParametre.bind(this);
 		this.pronadiRandomPraznoPolje = this.pronadiRandomPraznoPolje.bind(this);
 		this.postaviNoGuessMode = this.postaviNoGuessMode.bind(this);
+		this.postaviSkalniFaktor = this.postaviSkalniFaktor.bind(this);
 	}
 	
 	componentDidMount() {
@@ -489,6 +516,10 @@ class App extends React.Component {
 		this.setState(()=>{return {noGuessSw: sw}}, this.inicirajPolje);
 	}
 	
+	postaviSkalniFaktor(noviFak) {
+		this.setState({skalniFaktor: noviFak});
+	}
+	
 	formaPostaviParametre(x, y, minaBr) {
 		this.setState(()=>{return {nx: x, ny: y, brMina: minaBr}}, this.inicirajPolje);
 		console.log("postavljam parametre u glavnoj komponenti: " + x + " / " + y + " / " + minaBr + "   " + Math.random());	
@@ -497,9 +528,9 @@ class App extends React.Component {
 	render() {
 		return (
 		    <div id="strana">
-		        <Menu klik={this.kliknutiMenu} guessModeKlik={this.postaviNoGuessMode}/>
+		        <Menu postaviSkalniFaktor={this.postaviSkalniFaktor} klik={this.kliknutiMenu} guessModeKlik={this.postaviNoGuessMode}/>
 		        <Forma hideSw={this.state.formaHideSw} nx={this.state.nx} ny={this.state.ny} brMina={this.state.brMina} submitKlik={this.formaPostaviParametre}/>
-	            <Povrsina polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>   
+	            <Povrsina skalniFaktor={this.state.skalniFaktor} polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>   
 	        </div>
 		)
 	}
