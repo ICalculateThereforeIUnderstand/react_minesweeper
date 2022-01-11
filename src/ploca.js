@@ -7,60 +7,79 @@ function Polje({tip="prazno", klikPolje=defaultFun, id="-1"}) {
 	const [broj, setBroj] = React.useState("");
 	const [klasa, setKlasa] = React.useState("polje");
 	const [idOznaka] = React.useState(id);
+	const [krizicSw, setKrizicSw] = React.useState(false);
 	
 	React.useEffect(()=>{
 		switch (tip) {
 			case "prazno":
 			    setBroj("");
+			    setKrizicSw(false);
 			    setKlasa("polje");
 			    break;
 			case "1":
 			    setBroj("1");
+			    setKrizicSw(false);
 			    setKlasa("polje plava");
 			    break;
 			case "2":
 			    setBroj("2");
+			    setKrizicSw(false);
 			    setKlasa("polje zelena");
 			    break;
 			case "3":
 			    setBroj("3");
+			    setKrizicSw(false);
 			    setKlasa("polje crvena");
 			    break;
 			case "4":
 			    setBroj("4");
+			    setKrizicSw(false);
 			    setKlasa("polje ljubicasta");
 			    break;
 			case "5":
 			    setBroj("5");
+			    setKrizicSw(false);
 			    setKlasa("polje zuta");
 			    break;
 			case "6":
 			    setBroj("6");
+			    setKrizicSw(false);
 			    setKlasa("polje pink");
 			    break;
 			case "7":
 			    setBroj("7");
+			    setKrizicSw(false);
 			    setKlasa("polje narancasta");
 			    break;
 			case "8":
 			    setBroj("8");
+			    setKrizicSw(false);
 			    setKlasa("polje narancasta");
 			    break;
 			case "zatvoreno":
 			    setBroj("");
+			    setKrizicSw(false);
 			    setKlasa("polje zatvoreno");
 			    break;
 			case "zastava":
 			    setBroj("");
+			    setKrizicSw(false);
 			    setKlasa("polje zatvoreno zastava");
 			    break;
 			case "mina":
 			    setBroj("");
+			    setKrizicSw(false);
 			    setKlasa("polje mina");
 			    break;
 			case "mina-crveno":
 			    setBroj("");
+			    setKrizicSw(false);
 			    setKlasa("polje mina crvena1");
+			    break;
+			case "krizic":
+			    setBroj("");
+			    setKrizicSw(true);
+			    setKlasa("polje zatvoreno");
 			    break;
 			default:
 			    setBroj("-");
@@ -72,6 +91,18 @@ function Polje({tip="prazno", klikPolje=defaultFun, id="-1"}) {
 	return (
 	    <div className={klasa} onClick={(e)=>{klikPolje(e, idOznaka, true)}} onContextMenu={(e)=>{klikPolje(e, idOznaka, false)}}>
 	        {broj}
+	        {krizicSw ? <Krizic/> : null}
+	    </div>
+	)
+}
+
+function Krizic() {
+	return (
+	    <div className="krizic">
+	        <div className="krizic-el1">
+	        </div>
+            <div className="krizic-el2">
+	        </div>
 	    </div>
 	)
 }
@@ -125,7 +156,18 @@ export function Ploca({polje=[], klikPolje=defaultFun}) {
 	
 }
 
-export function Menu({klik=defaultFun}) {
+export function Menu({klik=defaultFun, guessModeKlik=defaultFun}) {
+	const [sw, setSw] = React.useState(false);
+	
+	function checkboxToggle() {
+		setSw((prevSw) => {if (prevSw) {return false}; return true; })
+	}
+	
+	React.useEffect(()=>{
+		console.log("Novi prekidac je " + sw + "   " + Math.random());
+		guessModeKlik(sw)
+	}, [sw]);
+	
 	return (
 	    <div id="menu">
 	        <div className="menu-el" onClick={()=>{klik("beginner")}}>
@@ -139,6 +181,12 @@ export function Menu({klik=defaultFun}) {
 	        </div>
 	        <div className="menu-el" onClick={()=>{klik("custom")}}>
 	            <p>Custom</p>
+	        </div>
+	        <div className="menu-el1">
+	            <form className="menu-el-form">
+	                <label>Guess mode</label>
+	                <input type="checkbox" onChange={checkboxToggle}/>
+	            </form>
 	        </div>
 	    </div>
 	)
