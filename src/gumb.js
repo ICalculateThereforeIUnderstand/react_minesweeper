@@ -23,7 +23,7 @@ class pomocna {
 			this.r.current.classList.remove("pritisnut");
 		    this.r.current.classList.add("otpusten");
 		    this.r1.current.style.transform = "translate(0%, 0%)";
-		}, 500);
+		}, 200);
 	}
 }
 
