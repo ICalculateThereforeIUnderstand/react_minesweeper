@@ -100,8 +100,8 @@ function DigitalniBroj({sirina=200, broj}) {
 	const r6 = React.useRef();
 	const r7 = React.useRef();
 	
-	let postotak = 0.18;  // odreduje efektivno odnos sirine elemenata brojke u odnosu na visinu, sto je postotak veci brojevi su "deblji"
-	let pomak = 0.015;  /*postotak pomaka u odnosu na visinu elementa*/
+	let postotak = 0.22;  // 0.18 odreduje efektivno odnos sirine elemenata brojke u odnosu na visinu, sto je postotak veci brojevi su "deblji"
+	let pomak = 0.015;  /* 0.015 postotak pomaka u odnosu na visinu elementa*/
 	
 	let koefVisine = (1-postotak)*2 + 4*pomak + postotak;
 	console.log("koef visine je " + koefVisine);
