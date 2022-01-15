@@ -35,19 +35,14 @@ function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaul
 		let st = window.getComputedStyle(r.current);
 		let vis = parseFloat(st.getPropertyValue('height'));
 		let sir = parseFloat(st.getPropertyValue('width'));
-		console.log("visina/sirina je " + vis + "/" + sir);
 		let visFak = -1*(1-skalniFaktor)*vis/2;
 		let sirFak = -1*(1-skalniFaktor)*sir/2;
-		console.log("pomaci:" + visFak);
-		console.log("pomaci:" + sirFak);
 		
 		dodajStilove(r.current, {transform: "scale(" + skalniFaktor + "," + skalniFaktor + ")", top: visFak + "px", left: sirFak + "px"});
 		
 		st = window.getComputedStyle(r.current);
 		vis = parseFloat(st.getPropertyValue('top'));
 		sir = parseFloat(st.getPropertyValue('left'));
-		console.log("top1/left1 je " + vis + "/" + sir);
-		
 		
 	}, [skalniFaktor, x, y]);
 	
@@ -165,7 +160,6 @@ class App extends React.Component {
 	}
 	
 	praznoPoljeSw(polje, x, y) {
-		//console.log("ispitujemo " + x + " - " + y);
 		
 		if (x < 0 || x >= this.state.nx) return false;
 		if (y < 0 || y >= this.state.ny) return false;
@@ -184,7 +178,6 @@ class App extends React.Component {
 	
 	vratiPraznaSusjednaPolja(x, y) {
 		let pp = [[x, y]];
-		//console.log("(" + x + "," + y + ")");
 		let polje = JSON.parse(JSON.stringify(this.state.polje));
 		let rez = [[x,y]];
 		polje[y][x] = "prosao";
@@ -272,16 +265,14 @@ class App extends React.Component {
 					brZas++;
 					brPre++;
 				}
-				console.log("Broj PREOSTALIH polja je " + brPre);
+				//console.log("Broj PREOSTALIH polja je " + brPre);
 				if (brPre == 0)  this.gameOverPobjeda();
 				return {poljeSw: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw), 
 					    brPreostalihMina: brZas, brPreostalihPolja: brPre};
 			})
 			
-			console.log("igramo se sa zastavicom. " + brPre);
 			if (false && brPre == 0) {
 				this.gameOverPobjeda();
-				console.log("trebao bih pobijediti");
 			}
 			return null; 
 		} else if (this.state.poljeSw[y][x] == "zastava"){  // slucaj klika lijevim gumbom na zastavu
@@ -290,7 +281,6 @@ class App extends React.Component {
 		
 		// ovdje program dolazi ako se radi o kliku lijevim gumbom misa na zatvoreno polje
 		if (this.state.polje[y][x] == "prazno") {
-			console.log("polje je prazno... " + Math.random());
 			
 			let rez = this.vratiPraznaSusjednaPolja(x, y);
 			let brPre = this.state.brPreostalihPolja;
@@ -308,8 +298,6 @@ class App extends React.Component {
 			}
 			brPre -= brNeotvorenih;
 			
-			console.log("Broj pronadenih polja je " + rez.length);
-			console.log("Broj PREOSTALIH polja je " + brPre);
 			this.setState((prevState) => {
 				return {brPreostalihPolja: brPre, poljeSw: pp, poljeDisplay: this.vratiDisplay(prevState.polje, pp),
 					    brPreostalihMina: prevState.brPreostalihMina+korekcijaBrMina}});
@@ -327,21 +315,18 @@ class App extends React.Component {
 		      if (this.state.brPreostalihPolja == 1)  this.gameOverPobjeda();
 		      
 		      this.setState((prevState)=>{
-			         console.log("Broj PREOSTALIH polja je " + (prevState.brPreostalihPolja-1));
+			         //console.log("Broj PREOSTALIH polja je " + (prevState.brPreostalihPolja-1));
 				     prevState.poljeSw[y][x]  = "otvoreno";
 				     return {poljeSw: prevState.poljeSw, poljeDisplay: this.vratiDisplay(prevState.polje, prevState.poljeSw),
 						     brPreostalihPolja: prevState.brPreostalihPolja-1}; 
 		      });
 		    }  
-		    
-		  
-		  console.log("Broj PREOSTALIH polja je " + this.state.brPreostalihPolja);  
+		  //console.log("Broj PREOSTALIH polja je " + this.state.brPreostalihPolja);  
 			
 		}
 	}
 	
 	gameOver(x, y) {
-		console.log("kliknuo si na minu. GAME OVER!");
 		clearInterval(this.timerRef);
 		this.setState((prevState)=>{
 			prevState.polje[y][x] = "mina-crveno";
@@ -352,7 +337,6 @@ class App extends React.Component {
 	}
 	
 	gameOverPobjeda(x, y) {
-		console.log("Upravo si otvorio sva polja. Cestitamo! ");
 		clearInterval(this.timerRef);
 		this.setState({emojiState: 2, gameOverSw: true});
 	}
@@ -394,9 +378,7 @@ class App extends React.Component {
 		
 		if (this.state.noGuessSw) {
 			let [x, y] = this.pronadiRandomPraznoPolje(pp1);
-			//console.log("postavili smo krizic na poziciju " + x + ", " + y);
 			pp2[y][x] = "krizic";
-			console.log("postavili smo krizic na poziciju " + x + ", " + y);
 		}
 		
 		if (this.timerRef !== null) {
@@ -410,13 +392,11 @@ class App extends React.Component {
 	pronadiRandomPraznoPolje(polje) {
 		let dulj2 = polje.length;
 		let dulj1 = polje[0].length;
-		//console.log("duljine su " + dulj1 + " / " + dulj2);
 		let rez = [];
 		for (let i = 0; i < dulj2; i++) {
 			for (let j = 0; j < dulj1; j++) {
 				if (polje[i][j] == "prazno") {
 					rez.push([j, i]);
-					//console.log("pronasli smo prazno mjesto " + Math.random());
 				}
 			}
 		}
@@ -500,20 +480,16 @@ class App extends React.Component {
 	}
 	
 	kliknutiMenu(e) {
-		console.log("kliknuo si na " + e + "  " + Math.random());
 		
 		switch (e) {
 			case "beginner":
 			    this.setState(()=>{return {nx: 9, ny: 9, brMina: 10, formaHideSw: true}}, this.inicirajPolje);
-			    //this.inicirajPolje();
 			    break;
 			case "intermediate":
 			    this.setState(()=>{return {nx: 16, ny: 16, brMina: 40, formaHideSw: true}}, this.inicirajPolje);
-			    //this.inicirajPolje();
 			    break;
 			case "expert":
 			    this.setState(()=>{return {nx: 30, ny: 16, brMina: 99, formaHideSw: true}}, this.inicirajPolje);
-			    //this.inicirajPolje();
 			    break;
 			case "custom":
 			    this.setState(()=>{return {formaHideSw: false}}, this.inicirajPolje);
@@ -533,7 +509,6 @@ class App extends React.Component {
 	
 	formaPostaviParametre(x, y, minaBr) {
 		this.setState(()=>{return {nx: x, ny: y, brMina: minaBr}}, this.inicirajPolje);
-		console.log("postavljam parametre u glavnoj komponenti: " + x + " / " + y + " / " + minaBr + "   " + Math.random());	
 	}
 	
 	render() {

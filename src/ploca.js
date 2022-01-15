@@ -166,7 +166,6 @@ export function Menu({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFa
 	}
 	
 	React.useEffect(()=>{
-		console.log("Novi prekidac je " + sw + "   " + Math.random());
 		guessModeKlik(sw)
 	}, [sw]);
 	
@@ -226,24 +225,20 @@ function DropdownOpcije1({postaviSkalniFaktor=defaultFun, klik=defaultFun}) {
 	function hoveraj(e) {
 		e.stopPropagation();
         r2.current.style.opacity = "1";
-        console.log("Hoveras... " + Math.random());
     }
     
     function odhoveraj(e) {
 		e.stopPropagation();
         r2.current.style.opacity = "0";
-        console.log("ODhoveras... " + Math.random());
     }
 	
 	function odabirBrKlik(br) {
-		console.log("Kliknuo si na broj " + br + "  /  " + Math.random());
 		setOdabraniBr(br);
 		setSw(false);
 	}
 	
 	function zatvori() {
 		setSw(false);
-		console.log("trebao bi sada zatvoriti meni.  " + Math.random());
 	}
 		
 	return (
@@ -304,24 +299,20 @@ function DropdownOpcije({postaviSkalniFaktor=defaultFun}) {
 	function hoveraj(e) {
 		e.stopPropagation();
         r2.current.style.opacity = "1";
-        console.log("Hoveras... " + Math.random());
     }
     
     function odhoveraj(e) {
 		e.stopPropagation();
         r2.current.style.opacity = "0";
-        console.log("ODhoveras... " + Math.random());
     }
 	
 	function odabirBrKlik(br) {
-		console.log("Kliknuo si na broj " + br + "  /  " + Math.random());
 		setOdabraniBr(br);
 		setSw(false);
 	}
 	
 	function zatvori() {
 		setSw(false);
-		console.log("trebao bi sada zatvoriti meni.  " + Math.random());
 	}
 	
 	function vratiPoljeElemenata() {
@@ -416,8 +407,6 @@ export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=fals
             let bottom = el.bottom;
             let left = el.left;
             
-            console.log("left/bottom OFFSET je " + left + " / " + bottom);
-            
             dodajStilove(r1.current, {position: "fixed", top: bottom+"px", left: left+50+"px", backgroundColor: "#5c5c5e", height: "80px", 
 				                      width: "300px", display: "block", borderRadius: "5px", color: "white", display: "flex", alignItems: "center",
 				                      padding: "0px 20px 0px 20px", fontFamily: "sans-serif", zIndex: 2});
@@ -479,8 +468,6 @@ export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=fals
 	
 	function unesi(e, setFun) {
 		let v = e.target.value;
-		console.log("unos:" + v + "      /   " + Math.random());
-		console.log("posljednje slovo je " + v.substr(-1));
 		switch (v.substr(-1)) {
 			case "0":
 			case "1":

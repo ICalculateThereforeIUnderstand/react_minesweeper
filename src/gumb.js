@@ -12,7 +12,6 @@ class pomocna {
 	}
 	
 	klik() {
-		console.log("upravo si kliknuo na funkciju... " + Math.random());
 		//dodajStilove(this.r.current, {borderLeft: "2px solid #555", borderTop: "2px solid #555"});
 		this.r.current.classList.remove("otpusten");
 		this.r.current.classList.add("pritisnut");
@@ -37,7 +36,6 @@ export function Gumb({klik=defaultFun, emojiState=2}) {
 	
 	React.useEffect(()=>{
 		let sirina = parseFloat(window.getComputedStyle(r.current, null).getPropertyValue("width"));
-		console.log("sirina gumba je " + sirina);
 		r1.current.style.display = "flex";
 		r1.current.style.width = sirina + "px";
 		r1.current.style.height = sirina + "px";
