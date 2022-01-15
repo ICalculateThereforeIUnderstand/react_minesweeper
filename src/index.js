@@ -7,6 +7,17 @@ import { DigitalniBrojac } from "./digitalniBrojac.js";
 
 let cont = document.querySelector("#cont");
 
+window.onload = function() {
+	document.addEventListener("keydown", (e) => {pritisakGumba(e)});
+	let ell = document.querySelector("html");
+	function pritisakGumba(e) {
+		if (e.code === "KeyS") {
+			console.log("sirina/visina prozora su " + ell.clientWidth + " / " + ell.clientHeight);
+			console.log(Math.random());
+		}
+	}
+}
+
 
 function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0}) {
 	const [matrica, setMatrica] = React.useState(polje);
@@ -16,7 +27,7 @@ function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaul
 	const [sw1, setSw1] = React.useState(true);
 	const r = React.useRef();
 	const r1 = React.useRef();
-	const r2 = React.useRef();
+	//const r2 = React.useRef();
 	const r3 = React.useRef();
 	
 	React.useEffect(()=>{
@@ -72,8 +83,8 @@ function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaul
 	            {sw ? 
 					<div id="povrsina-el-el">
 					    <DigitalniBrojac sirina="60px" broj={brMina}/>
-					    <Gumb ref={r2} klik={klikStart} emojiState={emojiState}/>
-	                    <DigitalniBrojac ref={r3} sirina="60px" broj={brSec}/> 
+					    <Gumb klik={klikStart} emojiState={emojiState}/>
+	                    <DigitalniBrojac sirina="60px" broj={brSec}/> 
 					</div> : 
 					    <>
 			            {sw1 ? 
@@ -81,7 +92,7 @@ function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaul
 							    <DigitalniBrojac sirina="60px" broj={brMina}/>
 							</div> :
 							<div id="povrsina-el-el">
-							    <Gumb ref={r2} klik={klikStart} emojiState={emojiState}/>
+							    <Gumb klik={klikStart} emojiState={emojiState}/>
 							</div>
 						}
                         </>						

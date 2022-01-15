@@ -413,16 +413,22 @@ export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=fals
 	    <form id="forma" onSubmit={submitaj} ref={r}>
 	        <div id="forma-div">
 	            <div className="forma-el" ref={r2}>
-	                <label className="forma-el-label" htmlFor="width">Width:</label>
-	                <input type="text" id="width" maxlength="2" className="input" name="sirina" value={x} onChange={(e)=>{unesi(e, setX)}}/>
+	                <div className="forma-el-div">
+                        <label className="forma-el-label" htmlFor="width">Width:</label>
+	                    <input type="text" id="width" maxLength="2" className="input" name="sirina" value={x} onChange={(e)=>{unesi(e, setX)}}/>
+	                </div>
 	            </div>
 	            <div className="forma-el" ref={r3}>
-	                <label className="forma-el-label" htmlFor="height">Height:</label>
-	                <input type="text" id="height" maxlength="2" className="input" name="visina" value={y} onChange={(e)=>{unesi(e, setY)}}/>
+	                <div className="forma-el-div">
+	                    <label className="forma-el-label" htmlFor="height">Height:</label>
+	                    <input type="text" id="height" maxLength="2" className="input" name="visina" value={y} onChange={(e)=>{unesi(e, setY)}}/>
+	                </div>
 	            </div>
 	            <div className="forma-el" ref={r4}>
-	                <label className="forma-el-label" htmlFor="mines">Mines:</label>
-	                <input type="text" id="mines" maxlength="3" className="input" name="mine" value={mineBr} onChange={(e)=>{unesi(e, setMineBr)}}/>
+	                <div className="forma-el-div">
+	                    <label className="forma-el-label" htmlFor="mines">Mines:</label>
+	                    <input type="text" id="mines" maxLength="3" className="input" name="mine" value={mineBr} onChange={(e)=>{unesi(e, setMineBr)}}/>
+	                </div>    
 	            </div>
 	            <div className="forma-button">
 	                <button type="submit">Update</button>
@@ -430,8 +436,7 @@ export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=fals
 	        </div> 
 	        <div className="forma-poruka" ref={r1} onClick={()=>{setPorukaSw(false)}}>
 	        </div> 
-	    </form>  
-	    
+	    </form>     
 	)
 }
 

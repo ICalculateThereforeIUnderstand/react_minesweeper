@@ -92,13 +92,13 @@ function DigitalniBroj({sirina=200, broj}) {
 	const [br, setBr] = React.useState(broj);
 	const [polje, setPolje] = React.useState([BOJA1,BOJA2,BOJA2,BOJA1,BOJA2,BOJA2,BOJA2]);
 	const r = React.useRef();
-	const r1 = React.useRef();
+	/*const r1 = React.useRef();
 	const r2 = React.useRef();
 	const r3 = React.useRef();
 	const r4 = React.useRef();
 	const r5 = React.useRef();
 	const r6 = React.useRef();
-	const r7 = React.useRef();
+	const r7 = React.useRef();*/
 	
 	let postotak = 0.22;  // 0.18 odreduje efektivno odnos sirine elemenata brojke u odnosu na visinu, sto je postotak veci brojevi su "deblji"
 	let pomak = 0.015;  /* 0.015 postotak pomaka u odnosu na visinu elementa*/
@@ -156,13 +156,13 @@ function DigitalniBroj({sirina=200, broj}) {
 	
 	return (
 	    <div ref={r} className="broj">
-	        <DigitalniElement ref={r1} boja={polje[0]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{left: sirina*postotak/2+"px", top:"0px"}}/>  {/*gornja*/}
-	        <DigitalniElement ref={r2} boja={polje[1]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{top: -1*sirina*postotak/2 + sirina*pomak + "px", left: "0px", transform: "rotate(90deg)", transformOrigin: "0% 100%"}}/>  {/*gornja lijeva*/}
-	        <DigitalniElement ref={r3} boja={polje[2]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{top: -1*sirina*postotak/2 + sirina*pomak + "px", right: "0px",transform: "rotate(-90deg)", transformOrigin: "100% 100%"}}/>  {/*gornja desna*/}
-	        <DigitalniElement ref={r4} boja={polje[3]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{left: sirina*postotak/2+"px", top: (1-postotak)*sirina + sirina*2*pomak + "px"}}/>  {/*srednja*/}
-	        <DigitalniElement ref={r5} boja={polje[4]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{top: -1*sirina*postotak/2 + sirina*3*pomak + (1-postotak)*sirina + "px", left: "0px", transform: "rotate(90deg)", transformOrigin: "0% 100%"}}/>  {/*donja lijeva*/}
-	        <DigitalniElement ref={r6} boja={polje[5]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{top: -1*sirina*postotak/2 + sirina*3*pomak + (1-postotak)*sirina + "px", right: "0px",transform: "rotate(-90deg)", transformOrigin: "100% 100%"}}/>  {/*donja desna*/}
-	        <DigitalniElement ref={r7} boja={polje[6]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{left: sirina*postotak/2+"px", top: 2*(1-postotak)*sirina + sirina*4*pomak + "px"}}/>  {/*donja*/}
+	        <DigitalniElement boja={polje[0]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{left: sirina*postotak/2+"px", top:"0px"}}/>  {/*gornja*/}
+	        <DigitalniElement boja={polje[1]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{top: -1*sirina*postotak/2 + sirina*pomak + "px", left: "0px", transform: "rotate(90deg)", transformOrigin: "0% 100%"}}/>  {/*gornja lijeva*/}
+	        <DigitalniElement boja={polje[2]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{top: -1*sirina*postotak/2 + sirina*pomak + "px", right: "0px",transform: "rotate(-90deg)", transformOrigin: "100% 100%"}}/>  {/*gornja desna*/}
+	        <DigitalniElement boja={polje[3]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{left: sirina*postotak/2+"px", top: (1-postotak)*sirina + sirina*2*pomak + "px"}}/>  {/*srednja*/}
+	        <DigitalniElement boja={polje[4]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{top: -1*sirina*postotak/2 + sirina*3*pomak + (1-postotak)*sirina + "px", left: "0px", transform: "rotate(90deg)", transformOrigin: "0% 100%"}}/>  {/*donja lijeva*/}
+	        <DigitalniElement boja={polje[5]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{top: -1*sirina*postotak/2 + sirina*3*pomak + (1-postotak)*sirina + "px", right: "0px",transform: "rotate(-90deg)", transformOrigin: "100% 100%"}}/>  {/*donja desna*/}
+	        <DigitalniElement boja={polje[6]} visina={sirina*postotak} sirina={(1-postotak)*sirina} stil={{left: sirina*postotak/2+"px", top: 2*(1-postotak)*sirina + sirina*4*pomak + "px"}}/>  {/*donja*/}
 	    </div>
 	)
 }
