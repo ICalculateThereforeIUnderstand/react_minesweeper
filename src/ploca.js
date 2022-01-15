@@ -184,6 +184,7 @@ export function Menu({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFa
 	        <div className="menu-el" onClick={()=>{klik("custom")}}>
 	            <p>Custom</p>
 	        </div>
+	        <DropdownOpcije1 klik={klik}/>
 	        <div className="menu-el1">
 	            <form className="menu-el-form">
 	                <label>Guess mode</label>
@@ -192,6 +193,84 @@ export function Menu({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFa
 	        </div>
             <DropdownOpcije postaviSkalniFaktor={postaviSkalniFaktor}/>
 	    </div>
+	)
+}
+
+function DropdownOpcije1({postaviSkalniFaktor=defaultFun, klik=defaultFun}) {
+	const [sw, setSw] = React.useState(false);
+	const [odabraniBr, setOdabraniBr] = React.useState("Beginner");
+	const r = React.useRef();
+	const r1 = React.useRef();
+	const r2 = React.useRef();
+	
+	React.useEffect(()=>{
+		document.addEventListener("click", zatvori);
+		
+		r1.current.addEventListener("mouseenter", hoveraj);
+        r1.current.addEventListener("mouseleave", odhoveraj);
+        
+	}, []);
+	
+	React.useEffect(()=>{
+		if (sw) {
+			r.current.style.display = "block";
+		} else {
+			r.current.style.display = "none";
+		}
+	}, [sw]);
+	
+	React.useEffect(()=>{
+		klik(odabraniBr.toLowerCase());
+	}, [odabraniBr]);
+
+	function hoveraj(e) {
+		e.stopPropagation();
+        r2.current.style.opacity = "1";
+        console.log("Hoveras... " + Math.random());
+    }
+    
+    function odhoveraj(e) {
+		e.stopPropagation();
+        r2.current.style.opacity = "0";
+        console.log("ODhoveras... " + Math.random());
+    }
+	
+	function odabirBrKlik(br) {
+		console.log("Kliknuo si na broj " + br + "  /  " + Math.random());
+		setOdabraniBr(br);
+		setSw(false);
+	}
+	
+	function zatvori() {
+		setSw(false);
+		console.log("trebao bi sada zatvoriti meni.  " + Math.random());
+	}
+		
+	return (
+	    <div className="menu-el-dropdown1" onClick={(e)=>{e.stopPropagation(); setSw((prevSw)=>{return !prevSw; })}}>
+	        <div className="menu-el-dropdown-el2">
+	            <p className="menu-el-dropdown-el2-br">{odabraniBr}</p>
+	        </div>
+	        <div className="menu-el-dropdown-el3">
+	            <IoIosArrowDown/>
+	        </div>
+	        
+	        <div className="menu-el-dropdown-el4 no-overflow" ref={r}>
+	            <DropdownElement1 br={"Beginner"} klik={odabirBrKlik}/>
+	            <DropdownElement1 br={"Intermediate"} klik={odabirBrKlik}/>
+	            <DropdownElement1 br={"Expert"} klik={odabirBrKlik}/>
+	            <DropdownElement1 br={"Custom"} klik={odabirBrKlik}/>
+	        </div>
+	        <div className="menu-el-dropdown-hoverPoruka hoverPoruka-dodatno" ref={r2}>
+	            <p>Zoom</p>
+	            <div className="menu-el-dropdown-hoverPoruka-pointer">
+	            </div>
+	        </div>
+	        
+	        <div className="menu-el-dropdown-hoverZona"  ref={r1}>
+	        </div>
+
+	    </div>	
 	)
 }
 
@@ -278,6 +357,16 @@ function DropdownOpcije({postaviSkalniFaktor=defaultFun}) {
 	        </div>
 
 	    </div>	
+	)
+}
+
+function DropdownElement1({br="nesto", klik=defaultFun}) {
+	return (
+	    <div className="menu-el-dropdown-el4-element" onClick={(e)=>{e.stopPropagation(); klik(br)}}>
+	        <div className="menu-el-dropdown-el4-element-el2">
+	            <p>{br}</p>
+	        </div>
+	    </div>
 	)
 }
 
