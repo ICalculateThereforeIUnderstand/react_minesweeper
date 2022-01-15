@@ -166,7 +166,6 @@ export function Menu({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFa
 	}
 	
 	React.useEffect(()=>{
-		console.log("Novi prekidac je " + sw + "   " + Math.random());
 		guessModeKlik(sw)
 	}, [sw]);
 	
@@ -184,6 +183,7 @@ export function Menu({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFa
 	        <div className="menu-el" onClick={()=>{klik("custom")}}>
 	            <p>Custom</p>
 	        </div>
+	        <DropdownOpcije1 klik={klik}/>
 	        <div className="menu-el1">
 	            <form className="menu-el-form">
 	                <label>Guess mode</label>
@@ -192,6 +192,80 @@ export function Menu({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFa
 	        </div>
             <DropdownOpcije postaviSkalniFaktor={postaviSkalniFaktor}/>
 	    </div>
+	)
+}
+
+function DropdownOpcije1({postaviSkalniFaktor=defaultFun, klik=defaultFun}) {
+	const [sw, setSw] = React.useState(false);
+	const [odabraniBr, setOdabraniBr] = React.useState("Beginner");
+	const r = React.useRef();
+	const r1 = React.useRef();
+	const r2 = React.useRef();
+	
+	React.useEffect(()=>{
+		document.addEventListener("click", zatvori);
+		
+		r1.current.addEventListener("mouseenter", hoveraj);
+        r1.current.addEventListener("mouseleave", odhoveraj);
+        
+	}, []);
+	
+	React.useEffect(()=>{
+		if (sw) {
+			r.current.style.display = "block";
+		} else {
+			r.current.style.display = "none";
+		}
+	}, [sw]);
+	
+	React.useEffect(()=>{
+		klik(odabraniBr.toLowerCase());
+	}, [odabraniBr]);
+
+	function hoveraj(e) {
+		e.stopPropagation();
+        r2.current.style.opacity = "1";
+    }
+    
+    function odhoveraj(e) {
+		e.stopPropagation();
+        r2.current.style.opacity = "0";
+    }
+	
+	function odabirBrKlik(br) {
+		setOdabraniBr(br);
+		setSw(false);
+	}
+	
+	function zatvori() {
+		setSw(false);
+	}
+		
+	return (
+	    <div className="menu-el-dropdown1" onClick={(e)=>{e.stopPropagation(); setSw((prevSw)=>{return !prevSw; })}}>
+	        <div className="menu-el-dropdown-el2">
+	            <p className="menu-el-dropdown-el2-br">{odabraniBr}</p>
+	        </div>
+	        <div className="menu-el-dropdown-el3">
+	            <IoIosArrowDown/>
+	        </div>
+	        
+	        <div className="menu-el-dropdown-el4 no-overflow" ref={r}>
+	            <DropdownElement1 br={"Beginner"} klik={odabirBrKlik}/>
+	            <DropdownElement1 br={"Intermediate"} klik={odabirBrKlik}/>
+	            <DropdownElement1 br={"Expert"} klik={odabirBrKlik}/>
+	            <DropdownElement1 br={"Custom"} klik={odabirBrKlik}/>
+	        </div>
+	        <div className="menu-el-dropdown-hoverPoruka hoverPoruka-dodatno" ref={r2}>
+	            <p>Zoom</p>
+	            <div className="menu-el-dropdown-hoverPoruka-pointer">
+	            </div>
+	        </div>
+	        
+	        <div className="menu-el-dropdown-hoverZona"  ref={r1}>
+	        </div>
+
+	    </div>	
 	)
 }
 
@@ -225,24 +299,20 @@ function DropdownOpcije({postaviSkalniFaktor=defaultFun}) {
 	function hoveraj(e) {
 		e.stopPropagation();
         r2.current.style.opacity = "1";
-        console.log("Hoveras... " + Math.random());
     }
     
     function odhoveraj(e) {
 		e.stopPropagation();
         r2.current.style.opacity = "0";
-        console.log("ODhoveras... " + Math.random());
     }
 	
 	function odabirBrKlik(br) {
-		console.log("Kliknuo si na broj " + br + "  /  " + Math.random());
 		setOdabraniBr(br);
 		setSw(false);
 	}
 	
 	function zatvori() {
 		setSw(false);
-		console.log("trebao bi sada zatvoriti meni.  " + Math.random());
 	}
 	
 	function vratiPoljeElemenata() {
@@ -278,6 +348,16 @@ function DropdownOpcije({postaviSkalniFaktor=defaultFun}) {
 	        </div>
 
 	    </div>	
+	)
+}
+
+function DropdownElement1({br="nesto", klik=defaultFun}) {
+	return (
+	    <div className="menu-el-dropdown-el4-element" onClick={(e)=>{e.stopPropagation(); klik(br)}}>
+	        <div className="menu-el-dropdown-el4-element-el2">
+	            <p>{br}</p>
+	        </div>
+	    </div>
 	)
 }
 
@@ -326,8 +406,6 @@ export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=fals
 			let el = rOdabrano.current.getBoundingClientRect();
             let bottom = el.bottom;
             let left = el.left;
-            
-            console.log("left/bottom OFFSET je " + left + " / " + bottom);
             
             dodajStilove(r1.current, {position: "fixed", top: bottom+"px", left: left+50+"px", backgroundColor: "#5c5c5e", height: "80px", 
 				                      width: "300px", display: "block", borderRadius: "5px", color: "white", display: "flex", alignItems: "center",
@@ -390,8 +468,6 @@ export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=fals
 	
 	function unesi(e, setFun) {
 		let v = e.target.value;
-		console.log("unos:" + v + "      /   " + Math.random());
-		console.log("posljednje slovo je " + v.substr(-1));
 		switch (v.substr(-1)) {
 			case "0":
 			case "1":
@@ -413,16 +489,22 @@ export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=fals
 	    <form id="forma" onSubmit={submitaj} ref={r}>
 	        <div id="forma-div">
 	            <div className="forma-el" ref={r2}>
-	                <label className="forma-el-label" htmlFor="width">Width:</label>
-	                <input type="text" id="width" maxlength="2" className="input" name="sirina" value={x} onChange={(e)=>{unesi(e, setX)}}/>
+	                <div className="forma-el-div">
+                        <label className="forma-el-label" htmlFor="width">Width:</label>
+	                    <input type="text" id="width" maxLength="2" className="input" name="sirina" value={x} onChange={(e)=>{unesi(e, setX)}}/>
+	                </div>
 	            </div>
 	            <div className="forma-el" ref={r3}>
-	                <label className="forma-el-label" htmlFor="height">Height:</label>
-	                <input type="text" id="height" maxlength="2" className="input" name="visina" value={y} onChange={(e)=>{unesi(e, setY)}}/>
+	                <div className="forma-el-div">
+	                    <label className="forma-el-label" htmlFor="height">Height:</label>
+	                    <input type="text" id="height" maxLength="2" className="input" name="visina" value={y} onChange={(e)=>{unesi(e, setY)}}/>
+	                </div>
 	            </div>
 	            <div className="forma-el" ref={r4}>
-	                <label className="forma-el-label" htmlFor="mines">Mines:</label>
-	                <input type="text" id="mines" maxlength="3" className="input" name="mine" value={mineBr} onChange={(e)=>{unesi(e, setMineBr)}}/>
+	                <div className="forma-el-div">
+	                    <label className="forma-el-label" htmlFor="mines">Mines:</label>
+	                    <input type="text" id="mines" maxLength="3" className="input" name="mine" value={mineBr} onChange={(e)=>{unesi(e, setMineBr)}}/>
+	                </div>    
 	            </div>
 	            <div className="forma-button">
 	                <button type="submit">Update</button>
@@ -430,8 +512,7 @@ export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=fals
 	        </div> 
 	        <div className="forma-poruka" ref={r1} onClick={()=>{setPorukaSw(false)}}>
 	        </div> 
-	    </form>  
-	    
+	    </form>     
 	)
 }
 
