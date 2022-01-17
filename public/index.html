@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8" />
         <title>Minesweeper</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     </head>
+	<style>
+		#hoverTest {
+            background-color: #000000;
+            height: 0px;
+            width: 0px;
+            pointer-events: none;
+        }
+
+        @media (hover: none) {
+            #hoverTest {
+                background-color: #010101;
+            }
+        }
+
+	</style>
     <body>
+		<div id="hoverTest"></div>
         <div id="cont">
 		</div>
     </body>
