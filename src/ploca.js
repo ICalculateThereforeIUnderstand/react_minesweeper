@@ -171,7 +171,7 @@ export function Ploca({polje=[], klikPolje=defaultFun, hoverSw=false}) {
 			    poljee.push(<Polje key={j+i*x} tip={matrica[i][j]} id={(j+i*x)+"el"} klikPolje={klikPolje} hoverSw={hoverSw}/>);
 		    }
 		}
-		return poljee;
+		return poljee; 
 	}
 	
 	

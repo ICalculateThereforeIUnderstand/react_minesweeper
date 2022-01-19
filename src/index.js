@@ -85,7 +85,7 @@ function Povrsin({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=default
 			            {sw1 ? 
 							<div id="povrsina-el-el" onClick={klikStart}>
 							    <DigitalniBrojac sirina="60px" broj={brMina}/>
-							</div> :
+							</div> : 
 							<div id="povrsina-el-el">
 							    <Gumb klik={klikStart} emojiState={emojiState}/>
 							</div>
