@@ -19,7 +19,7 @@ window.onload = function() {
 }
 
 
-function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0, hoverSw=false}) {
+function Povrsin({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0, hoverSw=false}) {
 	const [matrica, setMatrica] = React.useState(polje);
 	const [x, setX] = React.useState(0);
 	const [y, setY] = React.useState(0);
@@ -99,6 +99,8 @@ function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaul
 	    </div>
 	)
 }
+
+const Povrsina = React.memo(Povrsin);
 
 function defaultFun() { console.log("kliknuo si ali nisi postavio funkciju.")}
 
