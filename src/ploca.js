@@ -2,14 +2,18 @@ import React from "react";
 import "./ploca.css";
 import { FcSearch } from "react-icons/fc";
 import { IoIosArrowDown } from "react-icons/io";
+import { mouseEvents } from "./mouseEvents.js";
 
 function defaultFun() { console.log("kliknuo si ali nisi postavio funkciju2.")}
 
-function Polje({tip="prazno", klikPolje=defaultFun, id="-1"}) {
+function Polj({tip="prazno", klikPolje=defaultFun, id="-1", hoverSw=false}) {
 	const [broj, setBroj] = React.useState("");
 	const [klasa, setKlasa] = React.useState("polje");
 	const [idOznaka] = React.useState(id);
 	const [krizicSw, setKrizicSw] = React.useState(false);
+	const [hoverCapabilitySw] = React.useState(hoverSw);
+	const r = React.useRef();
+	let c = null;
 	
 	React.useEffect(()=>{
 		switch (tip) {
@@ -90,11 +94,30 @@ function Polje({tip="prazno", klikPolje=defaultFun, id="-1"}) {
 		
 	}, [tip]);
 	
+	React.useEffect(()=>{
+		if (!hoverCapabilitySw) {
+            c = new mouseEvents(r.current, klikPolje, idOznaka);
+            c.iniciraj();
+		}
+		
+		return ()=>{ if (!hoverCapabilitySw) {c.ocisti();} }
+	}, []);
+	
+
+	
 	return (
-	    <div className={klasa} onClick={(e)=>{klikPolje(e, idOznaka, true)}} onContextMenu={(e)=>{klikPolje(e, idOznaka, false)}}>
-	        {broj}
-	        {krizicSw ? <Krizic/> : null}
-	    </div>
+	  <>
+	    {hoverCapabilitySw ? 
+			<div className={klasa} onClick={(e)=>{klikPolje(e, idOznaka, true)}} onContextMenu={(e)=>{klikPolje(e, idOznaka, false)}}>
+	            {broj}
+	            {krizicSw ? <Krizic/> : null}
+	        </div>  :
+	        <div className={klasa} ref={r} onClick={(e)=>{klikPolje(e, idOznaka, true)}}>
+	            {broj}
+	            {krizicSw ? <Krizic/> : null}
+	        </div>
+		}
+	  </>	
 	)
 }
 
@@ -109,7 +132,9 @@ function Krizic() {
 	)
 }
 
-export function Ploca({polje=[], klikPolje=defaultFun}) {
+const Polje = React.memo(Polj);
+
+export function Ploca({polje=[], klikPolje=defaultFun, hoverSw=false}) {
 	const [matrica, setMatrica] = React.useState([]);
 	const [nx, setNx] = React.useState(0);
 	const [ny, setNy] = React.useState(0);
@@ -143,10 +168,10 @@ export function Ploca({polje=[], klikPolje=defaultFun}) {
 		
 		for (let i = 0; i < y; i++) {
 			for (let j = 0; j < x; j++) {
-			    poljee.push(<Polje key={j+i*x} tip={matrica[i][j]} id={(j+i*x)+"el"} klikPolje={klikPolje}/>);
+			    poljee.push(<Polje key={j+i*x} tip={matrica[i][j]} id={(j+i*x)+"el"} klikPolje={klikPolje} hoverSw={hoverSw}/>);
 		    }
 		}
-		return poljee;
+		return poljee; 
 	}
 	
 	
@@ -158,7 +183,7 @@ export function Ploca({polje=[], klikPolje=defaultFun}) {
 	
 }
 
-export function Menu({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFaktor=defaultFun}) {
+function Men({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFaktor=defaultFun}) {
 	const [sw, setSw] = React.useState(false);
 	
 	function checkboxToggle() {
@@ -194,6 +219,8 @@ export function Menu({klik=defaultFun, guessModeKlik=defaultFun, postaviSkalniFa
 	    </div>
 	)
 }
+
+export const Menu = React.memo(Men);
 
 function DropdownOpcije1({postaviSkalniFaktor=defaultFun, klik=defaultFun}) {
 	const [sw, setSw] = React.useState(false);
@@ -374,7 +401,7 @@ function DropdownElement({br=0, klik=defaultFun}) {
 	)
 }
 
-export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=false}) {
+function Form({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=false}) {
 	const [x, setX] = React.useState(nx);
 	const [y, setY] = React.useState(ny);
 	const [mineBr, setMineBr] = React.useState(brMina);
@@ -515,6 +542,8 @@ export function Forma({nx=9, ny=9, brMina=11, submitKlik=defaultFun, hideSw=fals
 	    </form>     
 	)
 }
+
+export const Forma = React.memo(Form);
 
 function dodajStilove(el, stilovi) {
     for (let key in stilovi) {

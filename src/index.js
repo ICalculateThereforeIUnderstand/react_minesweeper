@@ -19,7 +19,7 @@ window.onload = function() {
 }
 
 
-function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0}) {
+function Povrsin({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaultFun, klikStart=defaultFun, emojiState=0, hoverSw=false}) {
 	const [matrica, setMatrica] = React.useState(polje);
 	const [x, setX] = React.useState(0);
 	const [y, setY] = React.useState(0);
@@ -85,7 +85,7 @@ function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaul
 			            {sw1 ? 
 							<div id="povrsina-el-el" onClick={klikStart}>
 							    <DigitalniBrojac sirina="60px" broj={brMina}/>
-							</div> :
+							</div> : 
 							<div id="povrsina-el-el">
 							    <Gumb klik={klikStart} emojiState={emojiState}/>
 							</div>
@@ -94,11 +94,13 @@ function Povrsina({skalniFaktor=1, polje=[], brMina=0, brSec=0, klikPolje=defaul
 				}
 	        </div>
 	        <div id="povrsina-el1" ref={r1}>
-	            <Ploca polje={polje} klikPolje={klikPolje}/>
+	            <Ploca polje={polje} klikPolje={klikPolje} hoverSw={hoverSw}/>
 	        </div>
 	    </div>
 	)
 }
+
+const Povrsina = React.memo(Povrsin);
 
 function defaultFun() { console.log("kliknuo si ali nisi postavio funkciju.")}
 
@@ -121,7 +123,14 @@ class App extends React.Component {
 			gameOverSw: false,         // za true igra je zaustavljena
 			formaHideSw: false,         // za true skriva dropdown input formu
 			noGuessSw: false,           // za true oznacava pocetno polje
-			skalniFaktor: 1             // za 1 je display u normalnoj velicini
+			skalniFaktor: 1,            // za 1 je display u normalnoj velicini
+			hoverCapabilitySw: this.hoverCapability("hoverTest")
+		}
+		
+		if (this.hoverCapability("hoverTest")) {
+			console.log("Ovaj uredaj ima hover sposobnosti.");
+	    } else {
+			console.log("Ovaj uredaj NEMA hover sposobnosti.");
 		}
 		
 		this.timerRef = null;
@@ -142,7 +151,14 @@ class App extends React.Component {
 		this.pronadiRandomPraznoPolje = this.pronadiRandomPraznoPolje.bind(this);
 		this.postaviNoGuessMode = this.postaviNoGuessMode.bind(this);
 		this.postaviSkalniFaktor = this.postaviSkalniFaktor.bind(this);
+		this.hoverCapability = this.hoverCapability.bind(this);
 	}
+	
+	hoverCapability(id) {
+    // ova funkcija provjerava da li uredaj ima hover sposobnosti, id je id testnog div elementa kojem media query mjenja boju ovisno o hover sposobnosti
+	    if (window.getComputedStyle(document.querySelector("#"+id)).getPropertyValue("background-color") == "rgb(0, 0, 0)")  return true;
+	    return false;
+    }
 	
 	componentDidMount() {
 		this.inicirajPolje();
@@ -516,7 +532,7 @@ class App extends React.Component {
 		    <div id="strana">
 		        <Menu postaviSkalniFaktor={this.postaviSkalniFaktor} klik={this.kliknutiMenu} guessModeKlik={this.postaviNoGuessMode}/>
 		        <Forma hideSw={this.state.formaHideSw} nx={this.state.nx} ny={this.state.ny} brMina={this.state.brMina} submitKlik={this.formaPostaviParametre}/>
-	            <Povrsina skalniFaktor={this.state.skalniFaktor} polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>   
+	            <Povrsina hoverSw={this.state.hoverCapabilitySw} skalniFaktor={this.state.skalniFaktor} polje={this.state.poljeDisplay} brSec={this.state.brSec} brMina={this.state.brPreostalihMina} klikPolje={this.kliknutoPolje} klikStart={this.inicirajPolje} emojiState={this.state.emojiState}/>   
 	        </div>
 		)
 	}
